@@ -28,22 +28,19 @@ public class DBServiceArtist implements DBService<Artist>, Serializable {
         this.database = database;
     }
 
-    private Artist synchronizeArtist(Artist artist) {
-
-        return new Artist();
-    }
-
     @Override
     public DBResult add(Artist artist) {
-        return database.update(updateArtistAndReferences(artist));
+        artist.setId(getArtistIDbyVGMDBID(artist.getVgmdbID()));
+        updateArtistAndReferences(artist);
+        return database.update(artist);
     }
 
     @Override
     public Artist getORadd(Artist source) {
-        Artist realArtist = database.getArtistService().findBy(source.getVgmdbID());
+        Artist realArtist = findBy(source.getVgmdbID());
         if (realArtist == null) {
-            database.getArtistService().add(source);
-            realArtist = database.getArtistService().findBy(source.getVgmdbID());
+            database.update(source);
+            realArtist = findBy(source.getVgmdbID());
         }
         return realArtist;
     }
@@ -104,6 +101,20 @@ public class DBServiceArtist implements DBService<Artist>, Serializable {
             Query query = database.getEntityManager().createQuery(cq);
             query.setParameter("vgmdbID", vgmdbID);
             return (Artist) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public Long getArtistIDbyVGMDBID(int vgmdbID) {
+        try {
+            CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
+            CriteriaQuery cq = criteriaBuilder.createQuery();
+            Root<Artist> e = cq.from(Artist.class);
+            cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
+            Query query = database.getEntityManager().createQuery(cq);
+            query.setParameter("vgmdbID", vgmdbID);
+            return ((Artist) query.getSingleResult()).getId();
         } catch (NoResultException e) {
             return null;
         }

@@ -31,15 +31,22 @@ public class DBServiceAlbum implements DBService<Album>, Serializable {
 
     @Override
     public DBResult add(Album album) {
-        DBResult result = new DBResult();
-
-        if (album == null) {
-//            result.setSuccess(false);
-//            result.setMessage("Can't add 'no album'.");
-            return result;
-        }
-
+        album.setId(getAlbumIDbyVGMDBID(album.getVgmdbID()));
+        updateAlbumAndReferences(album);
         return database.update(album);
+    }
+
+    private Album updateAlbumAndReferences(Album album) {
+        album.getArrangers().replaceAll(database.getArtistService()::getORadd);
+        album.getComposers().replaceAll(database.getArtistService()::getORadd);
+        album.getLyricists().replaceAll(database.getArtistService()::getORadd);
+        album.getPerformers().replaceAll(database.getArtistService()::getORadd);
+        album.getRelatedAlbums().replaceAll(this::getORadd);
+        album.getReprints().replaceAll(this::getORadd);
+        
+        // @todo related discs & related products
+
+        return album;
     }
 
     @Override
@@ -74,7 +81,26 @@ public class DBServiceAlbum implements DBService<Album>, Serializable {
 
     @Override
     public Album getORadd(Album arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Album realAlbum = findBy(arg.getVgmdbID());
+        if (realAlbum == null) {
+            database.update(arg);
+            realAlbum = findBy(arg.getVgmdbID());
+        } 
+        return realAlbum;
+    }
+
+    public Long getAlbumIDbyVGMDBID(int vgmdbID) {
+        try {
+            CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
+            CriteriaQuery cq = criteriaBuilder.createQuery();
+            Root<Artist> e = cq.from(Album.class);
+            cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
+            Query query = database.getEntityManager().createQuery(cq);
+            query.setParameter("vgmdbID", vgmdbID);
+            return ((Album) query.getSingleResult()).getId();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 }

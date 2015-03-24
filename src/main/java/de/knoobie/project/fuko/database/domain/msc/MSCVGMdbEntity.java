@@ -30,7 +30,7 @@ abstract class MSCVGMdbEntity extends MSCEntity implements Serializable {
   private DataType type;
 //  @Id
   @Basic
-  @Column(nullable = true)
+  @Column(nullable = true, columnDefinition="TEXT")
   private String description;
 
   @OneToMany(targetEntity = Name.class)
