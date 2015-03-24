@@ -2,6 +2,7 @@ package de.knoobie.project.fuko.database.domain;
 
 import de.knoobie.project.fuko.database.domain.msc.MSCLocalFolderStorage;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -25,7 +26,7 @@ public @Getter @Setter class AlbumDisc extends MSCLocalFolderStorage implements 
   private Album album;  
 
   @OneToMany(targetEntity = AlbumTrack.class, mappedBy = "cd")
-  private List<AlbumTrack> tracks;
+  private List<AlbumTrack> tracks = new ArrayList<>();
 
   public AlbumDisc() {
 

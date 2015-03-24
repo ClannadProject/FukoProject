@@ -15,3 +15,4 @@ persistence.xml
 hs_err_pid*
 /target/
 /src/main/resources/META-INF/
+/nb-configuration.xml

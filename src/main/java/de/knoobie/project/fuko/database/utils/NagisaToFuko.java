@@ -1,6 +1,5 @@
 package de.knoobie.project.fuko.database.utils;
 
-import de.knoobie.project.clannadutils.common.DateUtilsJ8;
 import de.knoobie.project.clannadutils.common.ListUtils;
 import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
@@ -17,11 +16,10 @@ import de.knoobie.project.nagisa.gson.model.bo.VGMdbArtist;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbDiscography;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbMeta;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbPerson;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbWebsite;
-import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbArtistType;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbWebsiteType;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,38 +45,74 @@ public class NagisaToFuko {
         // clannad update/add
         artist.setCreditedWorks(ListUtils.getListAsString(source.getCreditedWorks()));
         artist.setDescription(StringUtils.trim(source.getDescription()));
-        artist.setDiscography(transformVGMdbArtistReleaseToArtistRelease(source.getDiscography()));
-        artist.setFeaturedOn(transformVGMdbArtistReleaseToArtistRelease(source.getFeaturedOn()));
-
-//        source.get
-//        artist.set
         transformVGMdbLinkToVGMdbID(artist, source.getLink(), DataType.ARTIST);
-        // doing Band/Person stuff later
-        // setArtistPerson
-        // serArtistBand
-        // artist.setArtistType(VGMdbArtistType.unit);
+        artist.setDiscography(transformVGMdbArtistReleaseToArtistRelease(artist, source.getDiscography()));
+        artist.setFeaturedOn(transformVGMdbArtistReleaseToArtistRelease(artist, source.getFeaturedOn()));
+
+        if (source.getType() != null) {
+            artist.setArtistType(source.getType());
+            switch (source.getType()) {
+                case individual:
+                    if (source.getPersonInfo() != null) {
+                        artist.setBirthdate(StringUtils.trim(source.getPersonInfo().getBirthdate()));
+                        artist.setBirthplace(StringUtils.trim(source.getPersonInfo().getBirthplace()));
+                        artist.setBloodtype(StringUtils.trim(source.getPersonInfo().getBloodtype()));
+                        artist.setGender(source.getPersonInfo().getGender());
+                        artist.setBandMemberOf(transformListOfVGMdbPersonToListOfArtist(source.getPersonInfo().getBandMemberOf()));
+                    }
+                    break;
+                case unit:
+                    if (source.getBandInfo() != null) {
+                        artist.setFormed(StringUtils.trim(source.getBandInfo().getFormed()));
+                        artist.setMember(transformListOfVGMdbPersonToListOfArtist(source.getBandInfo().getMember()));
+                        artist.setFormerMember(transformListOfVGMdbPersonToListOfArtist(source.getBandInfo().getFormerMember()));
+                    }
+                    break;
+            }
+        }
 
         artist.setName(StringUtils.trim(source.getName()));
-        artist.setNames(transformVGMdbNames(source.getAliases()));        
+        artist.setNames(transformVGMdbNames(source.getAliases()));
         artist.setPicture(transformVGMdbPictureToRealPicture(source.getPicture()));
         artist.setVariations(StringUtils.trim(source.getVariations()));
         transformVGMdbMetaData(artist, source.getMeta());
         artist.setWebsites(transformVGMdbWebsites(source.getWebsites()));
-//        artist.set
-        
+
         return artist;
     }
-    
-    public static void transformVGMdbMetaData(MSCVGMdbMeta newMeta, VGMdbMeta source){
-        if(newMeta == null || source == null){
-            return;
+
+    public static List<Artist> transformListOfVGMdbPersonToListOfArtist(List<VGMdbPerson> source) {
+        List<Artist> artists = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return artists;
         }
-        
-        newMeta.setVgmdbAdded(DateUtilsJ8.getSQLDate(source.getAddedDate(), null, true));
-        newMeta.setVgmdbUpdated(DateUtilsJ8.getSQLDate(source.getEditedDate(), null, true));
+
+        source.stream().forEach((person) -> {
+            if (!StringUtils.isEmpty(person.getLink())) {
+                Artist artist = new Artist();
+
+                artist.setNames(transformVGMdbNames(person.getNames()));
+                transformVGMdbLinkToVGMdbID(artist, person.getLink(), DataType.ARTIST);
+
+                artists.add(artist);
+            }
+
+        });
+
+        return artists;
     }
 
-    public static List<ArtistRelease> transformVGMdbArtistReleaseToArtistRelease(List<VGMdbDiscography> discograhpy) {
+    public static void transformVGMdbMetaData(MSCVGMdbMeta newMeta, VGMdbMeta source) {
+        if (newMeta == null || source == null) {
+            return;
+        }
+
+        newMeta.setVgmdbAdded(StringUtils.trim(source.getAddedDate()));
+        newMeta.setVgmdbUpdated(StringUtils.trim(source.getEditedDate()));
+    }
+
+    public static List<ArtistRelease> transformVGMdbArtistReleaseToArtistRelease(Artist artist, List<VGMdbDiscography> discograhpy) {
         List<ArtistRelease> artistReleases = new ArrayList<>();
 
         if (ListUtils.isEmpty(discograhpy)) {
@@ -86,13 +120,16 @@ public class NagisaToFuko {
         }
 
         discograhpy.stream().forEach((item) -> {
-            ArtistRelease name = new ArtistRelease();
-            name.setAlbumCatalog(StringUtils.trim(item.getCatalog()));
-            name.setNames(transformVGMdbNames(item.getNames()));
-            name.setReleaseDate(DateUtilsJ8.getSQLDate(item.getDate(),
-                    DateUtilsJ8.DATE_FORMAT_YEAR_MINUS_MONTH_MINUS_DAY, null, true));
-            transformVGMdbLinkToVGMdbID(name, item.getLink(), DataType.ARTIST);
-            name.setRoles(ListUtils.getListAsString(item.getRoles()));
+            ArtistRelease release = new ArtistRelease();
+            Album album = new Album();
+            album.setAlbumCatalog(StringUtils.trim(item.getCatalog()));
+            album.setNames(transformVGMdbNames(item.getNames()));
+            album.setReleaseDate(StringUtils.trim(item.getDate()));
+            transformVGMdbLinkToVGMdbID(album, item.getLink(), DataType.ALBUM);
+            release.setAlbum(album);
+            release.setRoles(ListUtils.getListAsString(item.getRoles()));
+            release.setArtist(artist);
+            artistReleases.add(release);
         });
 
         return artistReleases;
@@ -116,12 +153,12 @@ public class NagisaToFuko {
                         StringUtils.EMPTY), null, true));
         entity.setLink(StringUtils.trim(link));
     }
-    
-    private static VGMdbPicture transformVGMdbPictureToRealPicture(de.knoobie.project.nagisa.gson.model.bo.VGMdbPicture source){
-        if(source == null){
+
+    private static VGMdbPicture transformVGMdbPictureToRealPicture(de.knoobie.project.nagisa.gson.model.bo.VGMdbPicture source) {
+        if (source == null) {
             return null;
         }
-        
+
         VGMdbPicture picture = new VGMdbPicture();
         picture.setName(StringUtils.trim(source.getName()));
         picture.setUrlFull(StringUtils.trim(source.getFull()));
@@ -129,7 +166,7 @@ public class NagisaToFuko {
         picture.setUrlThumbnail(StringUtils.trim(source.getThumbnail()));
         return picture;
     }
-    
+
     private static List<Website> transformVGMdbWebsites(List<VGMdbWebsite> source) {
         List<Website> websites = new ArrayList<>();
 
@@ -141,14 +178,14 @@ public class NagisaToFuko {
             Website website = new Website();
             website.setName(StringUtils.trim(sourceWebsite.getName()));
             website.setLink(StringUtils.trim(sourceWebsite.getLink()));
-            website.setWebsiteType(sourceWebsite.getType()== null
+            website.setWebsiteType(sourceWebsite.getType() == null
                     ? VGMdbWebsiteType.unknown : sourceWebsite.getType());
             websites.add(website);
         });
 
         return websites;
     }
-    
+
     private static List<Name> transformVGMdbNames(List<VGMdbName> source) {
         List<Name> names = new ArrayList<>();
 

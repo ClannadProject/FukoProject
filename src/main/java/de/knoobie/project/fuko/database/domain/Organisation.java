@@ -2,6 +2,7 @@ package de.knoobie.project.fuko.database.domain;
 
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -27,7 +28,7 @@ public @Getter @Setter class Organisation extends MSCClannadMeta implements Seri
   // getNames --> getAliases!
   
   @OneToMany(targetEntity = OrganisationRelease.class, mappedBy = "publisher")
-  private List<OrganisationRelease> releases;
+  private List<OrganisationRelease> releases = new ArrayList<>();
   
   public Organisation() {
 

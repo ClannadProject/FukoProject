@@ -16,7 +16,7 @@ public @Getter @Setter class ProductMerchandise extends MSCVGMdbEntity implement
   
   @Basic
   @Column(nullable = true)
-  private Date releaseDate;
+  private String releaseDate;
   @Basic
   @Column(nullable = true)
   private String platform;

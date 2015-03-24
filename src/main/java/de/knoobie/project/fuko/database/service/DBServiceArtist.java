@@ -2,9 +2,14 @@ package de.knoobie.project.fuko.database.service;
 
 import de.knoobie.project.clannadutils.bo.DBResult;
 import de.knoobie.project.clannadutils.interfaces.DBService;
+import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
+import de.knoobie.project.fuko.database.domain.ArtistRelease;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -30,16 +35,39 @@ public class DBServiceArtist implements DBService<Artist>, Serializable {
 
     @Override
     public DBResult add(Artist artist) {
-        DBResult result = new DBResult();
+        return database.update(updateArtistAndReferences(artist));
+    }
 
-        if (artist == null) {
-//            result.setSuccess(false);
-//            result.setMessage("Can't add 'no artist'.");
-            return result;
+    @Override
+    public Artist getORadd(Artist source) {
+        Artist realArtist = database.getArtistService().findBy(source.getVgmdbID());
+        if (realArtist == null) {
+            database.getArtistService().add(source);
+            realArtist = database.getArtistService().findBy(source.getVgmdbID());
         }
-        System.out.println("do add");
-        System.out.println("database == "+database.toString());
-        return database.update(artist);
+        return realArtist;
+    }
+
+    private ArtistRelease getORaddArtistRelease(ArtistRelease source) {
+        if (source.getAlbum() != null && source.getAlbum().getVgmdbID() != null) {
+            Album realAlbum = database.getAlbumService().findBy(source.getAlbum().getVgmdbID());
+            if (realAlbum == null) {
+                database.getAlbumService().add(source.getAlbum());
+                realAlbum = database.getAlbumService().findBy(source.getAlbum().getVgmdbID());
+            }
+            source.setAlbum(realAlbum);
+        }
+        return source;
+    }
+
+    private Artist updateArtistAndReferences(Artist artist) {
+        artist.getDiscography().replaceAll(this::getORaddArtistRelease);
+        artist.getFeaturedOn().replaceAll(this::getORaddArtistRelease);
+        artist.getBandMemberOf().replaceAll(this::getORadd);
+        artist.getFormerMember().replaceAll(this::getORadd);
+        artist.getMember().replaceAll(this::getORadd);
+
+        return artist;
     }
 
     @Override
@@ -68,12 +96,16 @@ public class DBServiceArtist implements DBService<Artist>, Serializable {
 
     @Override
     public Artist findBy(int vgmdbID) {
-        CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
-        CriteriaQuery cq = criteriaBuilder.createQuery();
-        Root<Artist> e = cq.from(Artist.class);
-        cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
-        Query query = database.getEntityManager().createQuery(cq);
-        query.setParameter("vgmdbID", vgmdbID);
-        return (Artist) query.getSingleResult();
+        try {
+            CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
+            CriteriaQuery cq = criteriaBuilder.createQuery();
+            Root<Artist> e = cq.from(Artist.class);
+            cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
+            Query query = database.getEntityManager().createQuery(cq);
+            query.setParameter("vgmdbID", vgmdbID);
+            return (Artist) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

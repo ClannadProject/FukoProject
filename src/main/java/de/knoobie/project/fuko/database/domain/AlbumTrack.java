@@ -2,6 +2,7 @@ package de.knoobie.project.fuko.database.domain;
 
 import de.knoobie.project.fuko.database.domain.msc.MSCLocalFileStorage;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -19,7 +20,7 @@ public @Getter @Setter class AlbumTrack extends MSCLocalFileStorage implements S
   private String trackLength;
 
   @ManyToMany(targetEntity = Name.class)
-  private List<Name> names;
+  private List<Name> names = new ArrayList<>();
   
   @ManyToOne(optional = true, targetEntity = AlbumDisc.class)
   private AlbumDisc cd;

@@ -3,6 +3,7 @@ package de.knoobie.project.fuko.database.domain;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -12,10 +13,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "ALBUM")
 public @Getter @Setter class Album extends MSCClannadMeta implements Serializable {
 
   @Basic
@@ -43,7 +46,7 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
   private String albumType;
   @Basic
   @Column(nullable = true)
-  private Date releaseDate;
+  private String releaseDate;
   @Basic
   @Column(nullable = true)
   private Double releasePrice;
@@ -58,32 +61,32 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
   private VGMdbPicture cover;
 
   @ManyToMany(targetEntity = VGMdbPicture.class)
-  private List<VGMdbPicture> pictures;
+  private List<VGMdbPicture> pictures = new ArrayList<>();
 
   @ManyToMany(targetEntity = Artist.class)
   @JoinTable(name = "album_performers")
-  private List<Artist> performers;
+  private List<Artist> performers = new ArrayList<>();
 
   @ManyToMany(targetEntity = Artist.class)
   @JoinTable(name = "album_arrangers")
-  private List<Artist> arrangers;
+  private List<Artist> arrangers = new ArrayList<>();
   
   @ManyToMany(targetEntity = Artist.class)
   @JoinTable(name = "album_composers")
-  private List<Artist> composers;
+  private List<Artist> composers = new ArrayList<>();
   
   @ManyToMany(targetEntity = Artist.class)
   @JoinTable(name = "album_lyricists")
-  private List<Artist> lyricists;
+  private List<Artist> lyricists = new ArrayList<>();
   
   @OneToMany(targetEntity = AlbumDisc.class, mappedBy = "album")
   @JoinTable(name = "album_cds")
-  private List<AlbumDisc> discs;
+  private List<AlbumDisc> discs = new ArrayList<>();
   
 
   @ManyToMany(targetEntity = Product.class)
   @JoinTable(name = "album_represented_products")
-  private List<Product> representedProducts;
+  private List<Product> representedProducts = new ArrayList<>();
 
   @ManyToOne(optional = true, targetEntity = Organisation.class)
   private Organisation publisher;
@@ -93,17 +96,17 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
   
   @ManyToMany(targetEntity = Album.class)
   @JoinTable(name = "album_reprints")
-  private List<Album> reprints;
+  private List<Album> reprints = new ArrayList<>();
 
   @ManyToMany(targetEntity = Album.class)
   @JoinTable(name = "album_related_albums")
-  private List<Album> relatedAlbums;
+  private List<Album> relatedAlbums = new ArrayList<>();
 
   @ManyToMany(targetEntity = Store.class)
-  private List<Store> stores;
+  private List<Store> stores = new ArrayList<>();
 
   @ManyToMany(targetEntity = Website.class)
-  private List<Website> websites;
+  private List<Website> websites = new ArrayList<>();
 
 
   public Album() {

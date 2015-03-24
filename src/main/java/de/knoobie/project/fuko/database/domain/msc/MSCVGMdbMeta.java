@@ -1,7 +1,6 @@
 package de.knoobie.project.fuko.database.domain.msc;
 
 import java.io.Serializable;
-import java.sql.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -13,10 +12,10 @@ public @Getter @Setter abstract class MSCVGMdbMeta extends MSCVGMdbEntity implem
 
   @Basic
   @Column(nullable = true)
-  private Date vgmdbAdded;
+  private String vgmdbAdded;
   @Basic
   @Column(nullable = true)
-  private Date vgmdbUpdated;
+  private String vgmdbUpdated;
   @Basic
   @Column(nullable = true)
   private String vgmdbLink;

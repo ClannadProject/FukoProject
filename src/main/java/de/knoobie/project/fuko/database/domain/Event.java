@@ -3,6 +3,7 @@ package de.knoobie.project.fuko.database.domain;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -18,16 +19,16 @@ class Event extends MSCClannadMeta implements Serializable {
 
   @Basic
   @Column(nullable = true)
-  private Date startDate;
+  private String startDate;
   @Basic
   @Column(nullable = true)
-  private Date endDate;
+  private String endDate;
   @Basic
   @Column(nullable = true)
   private String shortName;
 
   @ManyToMany(targetEntity = Album.class)
-  private List<Album> releases;
+  private List<Album> releases = new ArrayList<>();
 
   public Event() {
 
