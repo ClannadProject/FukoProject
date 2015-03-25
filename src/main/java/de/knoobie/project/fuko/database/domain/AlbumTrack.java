@@ -18,6 +18,14 @@ public @Getter @Setter class AlbumTrack extends MSCLocalFileStorage implements S
   @Basic
   @Column(nullable = true)
   private String trackLength;
+  
+  @Basic
+  @Column(nullable = true)
+  private Integer trackPosition;
+  
+  @Basic
+  @Column(nullable = true)
+  private Integer trackRating;
 
   @ManyToMany(targetEntity = Name.class)
   private List<Name> names = new ArrayList<>();
