@@ -1,6 +1,8 @@
 package de.knoobie.project.fuko.database.domain;
 
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
+import de.knoobie.project.fuko.database.utils.VGMdbArtistModifier;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbArtist;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbArtistType;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbGender;
 import java.io.Serializable;
@@ -38,8 +40,8 @@ class Artist extends MSCClannadMeta implements Serializable {
     @Column(nullable = true)
     private VGMdbArtistType artistType;
 
-    @OneToOne(optional = true, targetEntity = VGMdbPicture.class)
-    private VGMdbPicture picture;
+    @OneToOne(optional = true, targetEntity = Picture.class)
+    private Picture picture;
 
     @Basic
     @Column(nullable = true)
@@ -85,60 +87,8 @@ class Artist extends MSCClannadMeta implements Serializable {
 
     }
 
-    public String getVariations() {
-        return variations;
-    }
-
-    public void setVariations(String variations) {
-        this.variations = variations;
-    }
-
-    public String getCreditedWorks() {
-        return creditedWorks;
-    }
-
-    public void setCreditedWorks(String creditedWorks) {
-        this.creditedWorks = creditedWorks;
-    }
-
-    public VGMdbArtistType getArtistType() {
-        return artistType;
-    }
-
-    public void setArtistType(VGMdbArtistType artistType) {
-        this.artistType = artistType;
-    }
-
-    public VGMdbPicture getPicture() {
-        return picture;
-    }
-
-    public void setPicture(VGMdbPicture picture) {
-        this.picture = picture;
-    }
-
-    public List<ArtistRelease> getDiscography() {
-        return discography;
-    }
-
-    public void setDiscography(List<ArtistRelease> discography) {
-        this.discography = discography;
-    }
-
-    public List<ArtistRelease> getFeaturedOn() {
-        return featuredOn;
-    }
-
-    public void setFeaturedOn(List<ArtistRelease> featuredOn) {
-        this.featuredOn = featuredOn;
-    }
-
-    public List<Website> getWebsites() {
-        return websites;
-    }
-
-    public void setWebsites(List<Website> websites) {
-        this.websites = websites;
+    public static Artist getFromVGMDB(VGMdbArtist artist){
+        return VGMdbArtistModifier.transformVGMdbArtist(artist, false);
     }
 
 }
