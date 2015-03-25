@@ -1,6 +1,8 @@
 package de.knoobie.project.fuko.database.domain;
 
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
+import de.knoobie.project.fuko.database.utils.VGMdbAlbumModifier;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -43,7 +45,10 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
   private String releaseCurrency;
   @Basic
   @Column(nullable = true)
-  private String albumType;
+  private String albumType;  
+  @Basic
+  @Column(nullable = true)
+  private Integer albumRating;
   @Basic
   @Column(nullable = true)
   private String releaseDate;
@@ -57,11 +62,11 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
   @Column(nullable = true)
   private Boolean localStorage;
 
-  @OneToOne(optional = true, targetEntity = VGMdbPicture.class)
-  private VGMdbPicture cover;
+  @OneToOne(optional = true, targetEntity = Picture.class)
+  private Picture cover;
 
-  @ManyToMany(targetEntity = VGMdbPicture.class)
-  private List<VGMdbPicture> pictures = new ArrayList<>();
+  @ManyToMany(targetEntity = Picture.class)
+  private List<Picture> pictures = new ArrayList<>();
 
   @ManyToMany(targetEntity = Artist.class)
   @JoinTable(name = "album_performers")
@@ -113,5 +118,9 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
     
 
   }
+
+    public static Album getFromVGMDB(VGMdbAlbum album){
+        return VGMdbAlbumModifier.transformVGMdbAlbum(album, false);
+    }
 
 }
