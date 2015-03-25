@@ -65,6 +65,15 @@ public class FukoDB {
         return artistService;
     }
 
+    private DBServiceProduct productService;
+
+    public DBServiceProduct getProductService() {
+        if (productService == null) {
+            return productService = new DBServiceProduct(this);
+        }
+        return productService;
+    }
+
     public DBResult update(MSCEntity entity) {
         EntityManager entityManager = null;
         DBResult result = new DBResult();

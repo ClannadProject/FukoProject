@@ -4,7 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.service.FukoDB;
-import de.knoobie.project.fuko.database.utils.NagisaToFuko;
+import de.knoobie.project.fuko.database.utils.VGMdbArtistModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbArtist;
 import de.knoobie.project.nagisa.gson.util.TestVGMdb;
@@ -23,7 +23,7 @@ public class Main {
 
             if (vgmdbArtist != null) {
                 System.out.println("vgmdbArtist -> " + vgmdbArtist.getName() + " / " + vgmdbArtist.getLink());
-                Artist artist = NagisaToFuko.transformVGMdbArtist(vgmdbArtist);
+                Artist artist = Artist.getFromVGMDB(vgmdbArtist);
                 if (artist != null) {
                     System.out.println("artist -> " + artist.getName() + " / " + artist.getLink());
                     FukoDB.getInstance().getArtistService().add(artist);
@@ -47,7 +47,7 @@ public class Main {
 
             if (vgmdbAlbum != null) {
                 System.out.println("vgmdbAlbum -> " + vgmdbAlbum.getName() + " / " + vgmdbAlbum.getLink());
-                Album album = NagisaToFuko.transformVGMdbAlbum(vgmdbAlbum);
+                Album album = Album.getFromVGMDB(vgmdbAlbum);
                 if (album != null) {
                     System.out.println("album -> " + album.getName() + " / " + album.getLink());
                     FukoDB.getInstance().getAlbumService().add(album);
