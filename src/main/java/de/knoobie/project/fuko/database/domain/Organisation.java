@@ -22,8 +22,8 @@ public @Getter @Setter class Organisation extends MSCClannadMeta implements Seri
   @Column(nullable = true)
   private String organisationType;
   
-  @OneToOne(optional = true, targetEntity = VGMdbPicture.class)
-  private VGMdbPicture picture;
+  @OneToOne(optional = true, targetEntity = Picture.class)
+  private Picture picture;
   
   // getNames --> getAliases!
   
