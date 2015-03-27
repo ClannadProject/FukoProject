@@ -4,6 +4,7 @@ import de.knoobie.project.clannadutils.bo.DBResult;
 import de.knoobie.project.clannadutils.interfaces.DBService;
 import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.Product;
+import de.knoobie.project.fuko.database.domain.ProductRelease;
 import java.io.Serializable;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -32,14 +33,9 @@ public class DBServiceProduct implements DBService<Product>, Serializable {
     }
 
     private Product updateProductAndReferences(Product product) {
-//        album.getArrangers().replaceAll(database.getArtistService()::getORadd);
-//        album.getComposers().replaceAll(database.getArtistService()::getORadd);
-//        album.getLyricists().replaceAll(database.getArtistService()::getORadd);
-//        album.getPerformers().replaceAll(database.getArtistService()::getORadd);
-//        album.getRelatedAlbums().replaceAll(this::getORadd);
-//        album.getReprints().replaceAll(this::getORadd);
-        // Tracks & Cds dürften so gehen?
-        // @todo related discs & related products
+        product.getFranchises().replaceAll(this::getORadd);
+        product.getTitles().replaceAll(this::getORadd);
+        product.getRelatedAlbums().replaceAll(database.getAlbumService()::getORadd);
 
         return product;
     }
@@ -80,7 +76,7 @@ public class DBServiceProduct implements DBService<Product>, Serializable {
         if (realProduct == null) {
             database.update(arg);
             realProduct = findBy(arg.getVgmdbID());
-        } 
+        }
         return realProduct;
     }
 
