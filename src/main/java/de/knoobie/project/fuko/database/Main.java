@@ -3,10 +3,13 @@ package de.knoobie.project.fuko.database;
 import com.google.gson.JsonSyntaxException;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
+import de.knoobie.project.fuko.database.domain.Name;
+import de.knoobie.project.fuko.database.domain.Product;
 import de.knoobie.project.fuko.database.service.FukoDB;
 import de.knoobie.project.fuko.database.utils.VGMdbArtistModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbArtist;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbProduct;
 import de.knoobie.project.nagisa.gson.util.TestVGMdb;
 import java.io.IOException;
 
@@ -58,36 +61,81 @@ public class Main {
                 System.out.println("vgmdbAlbum -> null");
             }
 
-//            Artist a = FukoDB.getInstance().g().findBy(45755);
-//            System.out.println("a--->  " + a.getName());
+        } catch (IllegalArgumentException | JsonSyntaxException | IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+        private static void addProduct(int vgmdbID) {
+        try {
+            VGMdbProduct vgmdbproduct = TestVGMdb.getProduct(""+vgmdbID);
+
+            if (vgmdbproduct != null) {
+                System.out.println("vgmdbproduct -> " + vgmdbproduct.getName() + " / " + vgmdbproduct.getLink());
+                Product product = Product.getFromVGMDB(vgmdbproduct);
+                if (product != null) {
+                    System.out.println("product -> " + product.getName() + " / " + product.getLink());
+                    FukoDB.getInstance().getProductService().add(product);
+                } else {
+                    System.out.println("product -> null");
+                }
+            } else {
+                System.out.println("vgmdbproduct -> null");
+            }
+
         } catch (IllegalArgumentException | JsonSyntaxException | IOException ex) {
             ex.printStackTrace();
         }
     }
 
     public static void main(String[] args) throws IllegalArgumentException, JsonSyntaxException, IOException {
-        initDB();
-        addArtist(6);
-        addAlbum(28329);
-        addAlbum(5046);
-        addArtist(11952);
-        addAlbum(45755);
-        addAlbum(45756);
-        addAlbum(46037);
-        addArtist(7699);
-        addAlbum(47823);
-        addAlbum(551);
-        addAlbum(8930);
+//        initDB();
+//        addProduct(1018);
+//        addProduct(1019);
+//        addProduct(1020);
+//        addProduct(1021);
+//        addProduct(1022);
+//        addProduct(1023);
+//                addArtist(6);
+//        addAlbum(28329);
+//        addAlbum(5046);
+//        addArtist(11952);
+//        addAlbum(45755);
+//        addAlbum(45756);
+//        addAlbum(46037);
+//        addArtist(7699);
+//        addAlbum(47823);
+//        addAlbum(551);
+//        addAlbum(8930);
         
-        Artist a = FukoDB.getInstance().getArtistService().findBy(7699);
-        System.out.println("---> "+ a.getName());
-        a.getDiscography().stream().forEach((release) -> {
-            System.out.println("a:discography: "+release.getAlbum().getLink()+" Roles: "+release.getRoles());
+        Product a = FukoDB.getInstance().getProductService().findBy(1018);
+        
+        System.out.println("Product: "+ a.getName());
+        a.getNames().stream().forEach((_item) -> {
+            System.out.println("Name: "+_item.getName()+" Language "+_item.getNameLanguage().getHumanizedName());
         });
-        a.getFeaturedOn().stream().forEach((release) -> {
-            System.out.println("a:featuredOn: "+release.getAlbum().getLink() +" Roles: "+release.getRoles());
+        System.out.println("Franchise:");
+        a.getFranchises().stream().forEach((_item) -> {
+            System.out.println("Franchise: "+_item.getName()+" Link "+_item.getLink());
         });
+        System.out.println("Title:");
+        a.getTitles().stream().forEach((_item) -> {
+            System.out.println("Title: "+_item.getName()+" Link "+_item.getLink());
+        });
+        System.out.println("Alben:");
+        a.getRelatedAlbums().stream().forEach((_item) -> {
+            System.out.println("Album: "+_item.getName()+" Link "+_item.getLink());
+        });
+//        addProduct(1018);
 
+//        Artist a = FukoDB.getInstance().getArtistService().findBy(7699);
+//        System.out.println("---> "+ a.getName());
+//        a.getDiscography().stream().forEach((release) -> {
+//            System.out.println("a:discography: "+release.getAlbum().getLink()+" Roles: "+release.getRoles());
+//        });
+//        a.getFeaturedOn().stream().forEach((release) -> {
+//            System.out.println("a:featuredOn: "+release.getAlbum().getLink() +" Roles: "+release.getRoles());
+//        });
 //        VGMdbArtist a = TestVGMdb.getArtist("7699");
 //      System.out.println("a--->  "+a.getName());
     }

@@ -48,6 +48,7 @@ public class VGMdbAlbumModifier {
         album.setName(StringUtils.trim(source.getName()));
         album.setNames(VGMdbCommonModifier.getModifiedNames(source.getNames()));
         album.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
+        album.setClassification(StringUtils.trim(source.getClassification()));
 
         VGMdbCommonModifier.addVGMdbID(album, source.getLink(), DataType.ALBUM);
 
@@ -59,6 +60,7 @@ public class VGMdbAlbumModifier {
         album.setComposers(VGMdbCommonModifier.getModifiedPersons(source.getComposers()));
         album.setLyricists(VGMdbCommonModifier.getModifiedPersons(source.getLyricists()));
         album.setPerformers(VGMdbCommonModifier.getModifiedPersons(source.getPerformers()));
+        album.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
 
         album.setPictures(VGMdbCommonModifier.getModifiedPictures(source.getPictures()));
 
@@ -67,7 +69,6 @@ public class VGMdbAlbumModifier {
 
         album.setDiscs(getModifiedAlbumDisc(source.getDiscs(), album));
 
-        album.setClassification(StringUtils.trim(source.getClassification()));
         album.setDescription(StringUtils.trim(source.getDescription()));
         album.setMediaFormat(StringUtils.trim(source.getMediaFormat()));
         album.setClannadAdded(new Date(DateUtils.getNow().getTime()));

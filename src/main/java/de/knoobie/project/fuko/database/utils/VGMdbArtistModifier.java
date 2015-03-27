@@ -32,6 +32,7 @@ public class VGMdbArtistModifier {
         artist.setCreditedWorks(ListUtils.getListAsString(source.getCreditedWorks()));
         artist.setClannadAdded(new Date(DateUtils.getNow().getTime()));
         artist.setClannadUpdated(artist.getClannadAdded());
+        artist.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
         artist.setDescription(StringUtils.trim(source.getDescription()));
         artist.setDiscography(VGMdbCommonModifier.getModifiedArtistsAlbums(artist, source.getDiscography()));
         artist.setFeaturedOn(VGMdbCommonModifier.getModifiedArtistsAlbums(artist, source.getFeaturedOn()));
