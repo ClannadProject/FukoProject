@@ -74,6 +74,15 @@ public class FukoDB {
         return productService;
     }
 
+    private DBServiceEvent eventService;
+
+    public DBServiceEvent getEventService() {
+        if (eventService == null) {
+            return eventService = new DBServiceEvent(this);
+        }
+        return eventService;
+    }
+
     public DBResult update(MSCEntity entity) {
         EntityManager entityManager = null;
         DBResult result = new DBResult();

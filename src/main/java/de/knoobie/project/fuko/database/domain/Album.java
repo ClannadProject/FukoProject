@@ -4,7 +4,6 @@ import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import de.knoobie.project.fuko.database.utils.VGMdbAlbumModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
 import java.io.Serializable;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -112,6 +111,10 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
 
   @ManyToMany(targetEntity = Website.class)
   private List<Website> websites = new ArrayList<>();
+  
+  @JoinTable(name = "event_album_releases")
+  @ManyToMany(targetEntity = Event.class, mappedBy = "releases")
+  private List<Event> events = new ArrayList<>();
 
 
   public Album() {
@@ -119,7 +122,7 @@ public @Getter @Setter class Album extends MSCClannadMeta implements Serializabl
 
   }
 
-    public static Album getFromVGMDB(VGMdbAlbum album){
+    public static Album getFromVGMDB(VGMdbAlbum album) {
         return VGMdbAlbumModifier.transformVGMdbAlbum(album, false);
     }
 

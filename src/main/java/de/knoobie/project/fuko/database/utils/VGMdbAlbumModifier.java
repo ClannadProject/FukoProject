@@ -12,6 +12,7 @@ import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbumDisc;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbumReprint;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbumTrack;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbEventRelease;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbStore;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -19,6 +20,38 @@ import java.util.List;
 
 public class VGMdbAlbumModifier {
 
+    public static List<Album> transformEventReleaseList(List<VGMdbEventRelease> source) {
+        List<Album> albums = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return albums;
+        }
+
+        source.stream().forEach((sourceAlbum) -> {
+            if (!StringUtils.isEmpty(sourceAlbum.getLink())) {
+                albums.add(transformVGMdbEventRelease(sourceAlbum));
+            }
+        });
+
+        return albums;
+    }  
+    
+        public static Album transformVGMdbEventRelease(VGMdbEventRelease source) {
+        if (source == null) {
+            return null;
+        }
+
+        Album album = new Album();
+        album.setReleaseDate(StringUtils.trim(source.getReleaseDate()));
+        album.setAlbumType(StringUtils.trim(source.getAlbumType()));
+        album.setNames(VGMdbCommonModifier.getModifiedNames(source.getNames()));
+        album.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
+        album.setPublisher(VGMdbOrganisationModifier.transformVGMdbPerson(source.getPublisher()));
+        VGMdbCommonModifier.addVGMdbID(album, source.getLink(), DataType.ALBUM);
+
+        return album;
+    }
+    
     public static List<Album> transformAlbumList(List<VGMdbAlbum> source) {
         List<Album> albums = new ArrayList<>();
 
@@ -49,6 +82,7 @@ public class VGMdbAlbumModifier {
         album.setNames(VGMdbCommonModifier.getModifiedNames(source.getNames()));
         album.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
         album.setClassification(StringUtils.trim(source.getClassification()));
+        album.setPublisher(VGMdbOrganisationModifier.transformVGMdbOrganisation(source.getPublisher(), true));
 
         VGMdbCommonModifier.addVGMdbID(album, source.getLink(), DataType.ALBUM);
 
@@ -60,12 +94,12 @@ public class VGMdbAlbumModifier {
         album.setComposers(VGMdbCommonModifier.getModifiedPersons(source.getComposers()));
         album.setLyricists(VGMdbCommonModifier.getModifiedPersons(source.getLyricists()));
         album.setPerformers(VGMdbCommonModifier.getModifiedPersons(source.getPerformers()));
+        album.setEvents(VGMdbEventModifier.transformEventList(source.getEvents()));
         album.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
 
         album.setPictures(VGMdbCommonModifier.getModifiedPictures(source.getPictures()));
 
         album.setDistributor(VGMdbOrganisationModifier.transformVGMdbOrganisation(source.getDistributor(), true));
-        album.setPublisher(VGMdbOrganisationModifier.transformVGMdbOrganisation(source.getPublisher(), true));
 
         album.setDiscs(getModifiedAlbumDisc(source.getDiscs(), album));
 

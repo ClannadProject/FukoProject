@@ -4,6 +4,7 @@ import de.knoobie.project.clannadutils.bo.DBResult;
 import de.knoobie.project.clannadutils.interfaces.DBService;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
+import de.knoobie.project.fuko.database.domain.Event;
 import java.io.Serializable;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -11,11 +12,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public class DBServiceAlbum implements DBService<Album>, Serializable {
+public class DBServiceEvent implements DBService<Event>, Serializable {
 
     private final FukoDB database;
 
-    DBServiceAlbum(final FukoDB database) {
+    DBServiceEvent(final FukoDB database) {
         if (database == null) {
             throw new IllegalArgumentException("Übergabeparameter dürfen nicht null sein (database = "
                     + database + ")!");
@@ -25,76 +26,74 @@ public class DBServiceAlbum implements DBService<Album>, Serializable {
     }
 
     @Override
-    public DBResult add(Album album) {
-        album.setId(getAlbumIDbyVGMDBID(album.getVgmdbID()));
-        updateAlbumAndReferences(album);
-        return database.update(album);
+    public DBResult add(Event event) {
+        event.setId(getEventIDbyVGMDBID(event.getVgmdbID()));
+        updateEventAndReferences(event);
+        if(event.getVgmdbID() == 171){
+            System.out.println("Event" + event.getName());
+            System.out.println("Event ID: "+event.getId());
+            event.getReleases().stream().forEach((release) -> {
+                System.out.println("Release: "+ release.getId()+" "+release.getName()+" "+release.getLink());
+            });
+        }
+        return database.update(event);
     }
 
-    private Album updateAlbumAndReferences(Album album) {
-        album.getArrangers().replaceAll(database.getArtistService()::getORadd);
-        album.getComposers().replaceAll(database.getArtistService()::getORadd);
-        album.getLyricists().replaceAll(database.getArtistService()::getORadd);
-        album.getPerformers().replaceAll(database.getArtistService()::getORadd);
-        album.getEvents().replaceAll(database.getEventService()::getORadd);
-        album.getRepresentedProducts().replaceAll(database.getProductService()::getORadd);
-        album.getRelatedAlbums().replaceAll(this::getORadd);
-        album.getReprints().replaceAll(this::getORadd);
-        // Tracks & Cds dürften so gehen?
-        // @todo related discs & related products
+    private Event updateEventAndReferences(Event event) {
+        event.getReleases().replaceAll(database.getAlbumService()::getORadd);
 
-        return album;
+        return event;
     }
 
     @Override
-    public DBResult update(Album args) {
+    public DBResult update(Event args) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public DBResult remove(Album args) {
+    public DBResult remove(Event args) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Album findBy(long id) {
+    public Event findBy(long id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Album findBy(int vgmdbID) {
+    public Event findBy(int vgmdbID) {
         try {
             CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
             CriteriaQuery cq = criteriaBuilder.createQuery();
-            Root<Artist> e = cq.from(Album.class);
+            Root<Artist> e = cq.from(Event.class);
             cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
             Query query = database.getEntityManager().createQuery(cq);
             query.setParameter("vgmdbID", vgmdbID);
-            return (Album) query.getSingleResult();
+            return (Event) query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     @Override
-    public Album getORadd(Album arg) {
-        Album realAlbum = findBy(arg.getVgmdbID());
-        if (realAlbum == null) {
+    public Event getORadd(Event arg) {
+        Event realEvent = findBy(arg.getVgmdbID());
+        if (realEvent == null) {
             database.update(arg);
-            realAlbum = findBy(arg.getVgmdbID());
-        } 
-        return realAlbum;
+            realEvent = findBy(arg.getVgmdbID());
+        }
+        return realEvent;
     }
 
-    public Long getAlbumIDbyVGMDBID(int vgmdbID) {
+    public Long getEventIDbyVGMDBID(int vgmdbID) {
         try {
             CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
             CriteriaQuery cq = criteriaBuilder.createQuery();
-            Root<Artist> e = cq.from(Album.class);
+            Root<Artist> e = cq.from(Event.class);
             cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
             Query query = database.getEntityManager().createQuery(cq);
             query.setParameter("vgmdbID", vgmdbID);
-            return ((Album) query.getSingleResult()).getId();
+            return ((Event) query.getSingleResult()).getId();
         } catch (NoResultException e) {
             return null;
         }

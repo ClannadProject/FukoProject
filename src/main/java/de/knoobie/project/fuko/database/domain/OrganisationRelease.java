@@ -1,10 +1,8 @@
 package de.knoobie.project.fuko.database.domain;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import lombok.Getter;

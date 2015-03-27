@@ -9,7 +9,8 @@ public enum DataType implements AdvancedEnum{
   EVENT("Event","event"),
   ORGANISATION("Organisation","org"),
   PRODUCT("Product","product"),
-  UNKNOWN("Unknown","unknown");
+  UNKNOWN("Unknown","unknown"),
+  RELEASE("Release","release");
 
   private final String type;
   private final String name;
