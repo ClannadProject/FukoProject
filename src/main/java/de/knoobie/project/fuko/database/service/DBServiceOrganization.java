@@ -1,17 +1,9 @@
 package de.knoobie.project.fuko.database.service;
 
-import de.knoobie.project.clannadutils.bo.DBResult;
-import de.knoobie.project.clannadutils.interfaces.DBService;
-import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.Organization;
 import de.knoobie.project.fuko.database.domain.OrganizationRelease;
 import de.knoobie.project.fuko.database.domain.Search;
 import java.io.Serializable;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 public class DBServiceOrganization extends AbstractDBService<Organization> implements Serializable {
 
