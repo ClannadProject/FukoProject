@@ -1,6 +1,7 @@
 package de.knoobie.project.fuko.database.service;
 
 import de.knoobie.project.clannadutils.bo.DBResult;
+import de.knoobie.project.fuko.database.domain.Search;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -10,8 +11,8 @@ import javax.persistence.criteria.Root;
 
 public abstract class AbstractDBService<T extends MSCClannadMeta> {
 
-    private final FukoDB database;
-    private static final String VGMDB_COLUMN_ID = "vgmdbID";
+    public final FukoDB database;
+    public static final String VGMDB_COLUMN_ID = "vgmdbID";
 
     AbstractDBService(final FukoDB database) {
         if (database == null) {
@@ -42,11 +43,11 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> {
         return null;
     }
 
-    public T findBy(T clazz, int vgmdbID) {
+    public T findBy(Class<T> clazz, int vgmdbID) {
         try {
             CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
             CriteriaQuery cq = criteriaBuilder.createQuery();
-            Root<T> e = cq.from(clazz.getClass());
+            Root<T> e = cq.from(clazz);
             cq.where(criteriaBuilder.equal(e.get(VGMDB_COLUMN_ID), criteriaBuilder.parameter(Integer.class, VGMDB_COLUMN_ID)));
             Query query = database.getEntityManager().createQuery(cq);
             query.setParameter(VGMDB_COLUMN_ID, vgmdbID);
@@ -56,7 +57,7 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> {
         }
     }
 
-    public DBResult update(T object) {
+    public DBResult updateWithRelations(T object) {
         object.setId(getID(object.getVgmdbID()));
         object = updateDatabaseRelations(object);
         return database.update(object);
@@ -64,5 +65,7 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> {
 
     public abstract T findBy(int vgmdbID);
 
-    public abstract T updateDatabaseRelations(T object);
+    protected abstract T updateDatabaseRelations(T object);
+    
+    public abstract Search updateSearch(Search object);
 }

@@ -1,38 +1,22 @@
 package de.knoobie.project.fuko.database.service;
 
-import de.knoobie.project.clannadutils.bo.DBResult;
-import de.knoobie.project.clannadutils.interfaces.DBService;
 import de.knoobie.project.fuko.database.domain.Album;
-import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.Search;
 import java.io.Serializable;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
-public class DBServiceAlbum implements DBService<Album, Search>, Serializable {
-
-    private final FukoDB database;
+public class DBServiceAlbum extends AbstractDBService<Album> implements Serializable {
 
     DBServiceAlbum(final FukoDB database) {
-        if (database == null) {
-            throw new IllegalArgumentException("Übergabeparameter dürfen nicht null sein (database = "
-                    + database + ")!");
-        }
-
-        this.database = database;
+        super(database);
     }
 
     @Override
-    public DBResult add(Album album) {
-        album.setId(getAlbumIDbyVGMDBID(album.getVgmdbID()));
-        updateAlbumAndReferences(album);
-        return database.update(album);
+    public Album findBy(int vgmdbID) {
+        return findBy(Album.class, vgmdbID);
     }
 
-    private Album updateAlbumAndReferences(Album album) {
+    @Override
+    protected Album updateDatabaseRelations(Album album) {
         album.getArrangers().replaceAll(database.getArtistService()::getORadd);
         album.getComposers().replaceAll(database.getArtistService()::getORadd);
         album.getLyricists().replaceAll(database.getArtistService()::getORadd);
@@ -41,70 +25,14 @@ public class DBServiceAlbum implements DBService<Album, Search>, Serializable {
         album.getRepresentedProducts().replaceAll(database.getProductService()::getORadd);
         album.getRelatedAlbums().replaceAll(this::getORadd);
         album.getReprints().replaceAll(this::getORadd);
-        // Tracks & Cds dürften so gehen?
-        // @todo related discs & related products
 
         return album;
     }
 
     @Override
-    public DBResult update(Album args) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public DBResult remove(Album args) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Album findBy(long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Album findBy(int vgmdbID) {
-        try {
-            CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
-            CriteriaQuery cq = criteriaBuilder.createQuery();
-            Root<Artist> e = cq.from(Album.class);
-            cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
-            Query query = database.getEntityManager().createQuery(cq);
-            query.setParameter("vgmdbID", vgmdbID);
-            return (Album) query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public Album getORadd(Album arg) {
-        Album realAlbum = findBy(arg.getVgmdbID());
-        if (realAlbum == null) {
-            database.update(arg);
-            realAlbum = findBy(arg.getVgmdbID());
-        }
-        return realAlbum;
-    }
-
-    public Long getAlbumIDbyVGMDBID(int vgmdbID) {
-        try {
-            CriteriaBuilder criteriaBuilder = database.getEntityManager().getCriteriaBuilder();
-            CriteriaQuery cq = criteriaBuilder.createQuery();
-            Root<Artist> e = cq.from(Album.class);
-            cq.where(criteriaBuilder.equal(e.get("vgmdbID"), criteriaBuilder.parameter(Integer.class, "vgmdbID")));
-            Query query = database.getEntityManager().createQuery(cq);
-            query.setParameter("vgmdbID", vgmdbID);
-            return ((Album) query.getSingleResult()).getId();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public Search updateSearch(Search arg) {
-        arg.getAlbums().replaceAll(this::getORadd);
-        return arg;
+    public Search updateSearch(Search object) {
+        object.getAlbums().replaceAll(this::getORadd);
+        return object;
     }
 
 }
