@@ -4,15 +4,18 @@ import com.google.gson.JsonSyntaxException;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.Event;
-import de.knoobie.project.fuko.database.domain.Name;
+import de.knoobie.project.fuko.database.domain.Organization;
 import de.knoobie.project.fuko.database.domain.Product;
+import de.knoobie.project.fuko.database.domain.Search;
 import de.knoobie.project.fuko.database.service.FukoDB;
-import de.knoobie.project.fuko.database.utils.VGMdbArtistModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbArtist;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbEvent;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbOrganisation;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbProduct;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbSearch;
 import de.knoobie.project.nagisa.gson.util.TestVGMdb;
+import de.knoobie.project.nagisa.gson.util.VGMdb;
 import java.io.IOException;
 
 public class Main {
@@ -24,7 +27,7 @@ public class Main {
 
     private static void addArtist(int vgmdbID) {
         try {
-            VGMdbArtist vgmdbArtist = TestVGMdb.getArtist("" + vgmdbID);
+            VGMdbArtist vgmdbArtist = VGMdb.getArtist("" + vgmdbID);
 
             if (vgmdbArtist != null) {
                 System.out.println("vgmdbArtist -> " + vgmdbArtist.getName() + " / " + vgmdbArtist.getLink());
@@ -48,7 +51,7 @@ public class Main {
 
     private static void addAlbum(int vgmdbID) {
         try {
-            VGMdbAlbum vgmdbAlbum = TestVGMdb.getAlbum("" + vgmdbID);
+            VGMdbAlbum vgmdbAlbum = VGMdb.getAlbum("" + vgmdbID);
 
             if (vgmdbAlbum != null) {
                 System.out.println("vgmdbAlbum -> " + vgmdbAlbum.getName() + " / " + vgmdbAlbum.getLink());
@@ -70,7 +73,7 @@ public class Main {
 
     private static void addEvent(int vgmdbID) {
         try {
-            VGMdbEvent vgmdbEvent = TestVGMdb.getEvent("" + vgmdbID);
+            VGMdbEvent vgmdbEvent = VGMdb.getEvent("" + vgmdbID);
 
             if (vgmdbEvent != null) {
                 System.out.println("vgmdbEvent -> " + vgmdbEvent.getName() + " / " + vgmdbEvent.getLink());
@@ -90,9 +93,32 @@ public class Main {
         }
     }
 
+    private static void addOrganisation(int vgmdbID) {
+        try {
+            VGMdbOrganisation vgmdbOrganisation = VGMdb.getOrganisation("" + vgmdbID);
+
+            if (vgmdbOrganisation != null) {
+                System.out.println("vgmdbOrganisation -> " + vgmdbOrganisation.getName() + " / " + vgmdbOrganisation.getLink());
+                Organization organizetion = Organization.getFromVGMDB(vgmdbOrganisation);
+//                Organization Organization = Organization.getFromVGMDB(vgmdbOrganisation);
+                if (organizetion != null) {
+                    System.out.println("Organization -> " + organizetion.getName() + " / " + organizetion.getLink());
+                    FukoDB.getInstance().getOrganizationService().add(organizetion);
+                } else {
+                    System.out.println("Organization -> null");
+                }
+            } else {
+                System.out.println("vgmdbOrganisation -> null");
+            }
+
+        } catch (IllegalArgumentException | JsonSyntaxException | IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private static void addProduct(int vgmdbID) {
         try {
-            VGMdbProduct vgmdbproduct = TestVGMdb.getProduct("" + vgmdbID);
+            VGMdbProduct vgmdbproduct = VGMdb.getProduct("" + vgmdbID);
 
             if (vgmdbproduct != null) {
                 System.out.println("vgmdbproduct -> " + vgmdbproduct.getName() + " / " + vgmdbproduct.getLink());
@@ -112,22 +138,63 @@ public class Main {
         }
     }
 
+    private static Search search(String query) {
+        try {
+            VGMdbSearch vgmdbSearch = VGMdb.search("kantai");
+
+            if (vgmdbSearch != null) {
+                System.out.println("vgmdbSearch -> " + vgmdbSearch.getQuery() + " / " + vgmdbSearch.getLink());
+                Search search = Search.getFromVGMdb(vgmdbSearch);
+                if (search != null) {
+                    System.out.println("search -> " + search.getQuery()+ " / " + search.getLink());
+                    return FukoDB.getInstance().updateSearch(search);
+                } else {
+                    System.out.println("search -> null");
+                    return null;
+                }
+            } else {
+                System.out.println("vgmdbSearch -> null");
+                return null;
+            }
+
+        } catch (IllegalArgumentException | JsonSyntaxException | IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) throws IllegalArgumentException, JsonSyntaxException, IOException {
         initDB();
+        Search s = search("kantai");
+        if(s != null){
+            s.getProducts().stream().forEach((product) -> {
+                addProduct(product.getVgmdbID());
+            });
+            s.getOrganizations().stream().forEach((product) -> {
+                addOrganisation(product.getVgmdbID());
+            });
+            s.getArtists().stream().forEach((product) -> {
+                addArtist(product.getVgmdbID());
+            });
+            s.getAlbums().stream().forEach((product) -> {
+                addAlbum(product.getVgmdbID());
+            });
+        }
         
-        addEvent(1);
-        addEvent(98);
-        addEvent(54);
-        addEvent(175);
-        addEvent(171);
-        addEvent(123);
+//        addOrganisation(1);
+//        addEvent(1);
+//        addEvent(98);
+//        addEvent(54);
+//        addEvent(175);
+//        addEvent(171);
+//        addEvent(123);
 //        addProduct(1018);
 //        addProduct(1019);
 //        addProduct(1020);
 //        addProduct(1021);
 //        addProduct(1022);
 //        addProduct(1023);
-//                addArtist(6);
+//        addArtist(6);
 //        addAlbum(28329);
 //        addAlbum(5046);
 //        addArtist(11952);

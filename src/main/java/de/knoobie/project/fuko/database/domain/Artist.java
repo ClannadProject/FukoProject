@@ -29,9 +29,6 @@ class Artist extends MSCClannadMeta implements Serializable {
 
     @Basic
     @Column(nullable = true)
-    private String variations;
-    @Basic
-    @Column(nullable = true)
     // List<String> creditedWorks -> String with ', ' ( Allgemeine Artist Infos: wie viele Alben in DB etc )
     private String creditedWorks;
 

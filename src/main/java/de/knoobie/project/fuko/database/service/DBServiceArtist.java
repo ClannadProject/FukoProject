@@ -5,6 +5,7 @@ import de.knoobie.project.clannadutils.interfaces.DBService;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.ArtistRelease;
+import de.knoobie.project.fuko.database.domain.Search;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public class DBServiceArtist implements DBService<Artist>, Serializable {
+public class DBServiceArtist implements DBService<Artist, Search>, Serializable {
 
     private final FukoDB database;
 
@@ -118,5 +119,11 @@ public class DBServiceArtist implements DBService<Artist>, Serializable {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    @Override
+    public Search updateSearch(Search arg) {
+        arg.getArtists().replaceAll(this::getORadd);
+        return arg;
     }
 }

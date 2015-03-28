@@ -7,7 +7,7 @@ public enum DataType implements AdvancedEnum{
   ALBUM("Album","album"), 
   ARTIST("Artist","artist"), 
   EVENT("Event","event"),
-  ORGANISATION("Organisation","org"),
+  ORGANIZATION("Organization","org"),
   PRODUCT("Product","product"),
   UNKNOWN("Unknown","unknown"),
   RELEASE("Release","release");

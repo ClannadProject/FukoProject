@@ -5,6 +5,7 @@ import de.knoobie.project.clannadutils.interfaces.DBService;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.Event;
+import de.knoobie.project.fuko.database.domain.Search;
 import java.io.Serializable;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -12,7 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public class DBServiceEvent implements DBService<Event>, Serializable {
+public class DBServiceEvent implements DBService<Event, Search>, Serializable {
 
     private final FukoDB database;
 
@@ -29,13 +30,6 @@ public class DBServiceEvent implements DBService<Event>, Serializable {
     public DBResult add(Event event) {
         event.setId(getEventIDbyVGMDBID(event.getVgmdbID()));
         updateEventAndReferences(event);
-        if(event.getVgmdbID() == 171){
-            System.out.println("Event" + event.getName());
-            System.out.println("Event ID: "+event.getId());
-            event.getReleases().stream().forEach((release) -> {
-                System.out.println("Release: "+ release.getId()+" "+release.getName()+" "+release.getLink());
-            });
-        }
         return database.update(event);
     }
 
@@ -99,4 +93,8 @@ public class DBServiceEvent implements DBService<Event>, Serializable {
         }
     }
 
+    @Override
+    public Search updateSearch(Search arg) {
+        return arg;
+    }
 }
