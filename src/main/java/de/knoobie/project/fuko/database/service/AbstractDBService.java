@@ -1,6 +1,6 @@
 package de.knoobie.project.fuko.database.service;
 
-import de.knoobie.project.clannadutils.bo.DBResult;
+import de.knoobie.project.fuko.database.bo.DatabaseOperationResult;
 import de.knoobie.project.fuko.database.domain.Search;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import javax.persistence.NoResultException;
@@ -57,7 +57,7 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> {
         }
     }
 
-    public DBResult updateWithRelations(T object) {
+    public DatabaseOperationResult updateWithRelations(T object) {
         object.setId(getID(object.getVgmdbID()));
         object = updateDatabaseRelations(object);
         return database.update(object);

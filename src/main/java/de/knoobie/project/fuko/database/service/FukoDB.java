@@ -1,6 +1,6 @@
 package de.knoobie.project.fuko.database.service;
 
-import de.knoobie.project.clannadutils.bo.DBResult;
+import de.knoobie.project.fuko.database.bo.DatabaseOperationResult;
 import de.knoobie.project.fuko.database.domain.Search;
 import de.knoobie.project.fuko.database.domain.msc.MSCEntity;
 import javax.persistence.EntityManager;
@@ -108,9 +108,9 @@ public class FukoDB {
         return source;
     }
     
-    public DBResult update(MSCEntity entity) {
+    public DatabaseOperationResult update(MSCEntity entity) {
         EntityManager entityManager = null;
-        DBResult result = new DBResult();
+        DatabaseOperationResult result = new DatabaseOperationResult();
 //        result.setResultObj(entity);
 
         if (entity == null) {
