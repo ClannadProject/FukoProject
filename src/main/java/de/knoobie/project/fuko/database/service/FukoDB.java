@@ -5,7 +5,11 @@ import de.knoobie.project.fuko.database.domain.Search;
 import de.knoobie.project.fuko.database.domain.msc.MSCEntity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 public class FukoDB {
 
@@ -93,21 +97,20 @@ public class FukoDB {
         return organizationService;
     }
 
-    public Search updateSearch(Search source){
-        if(source == null){
+    public Search updateSearch(Search source) {
+        if (source == null) {
             return null;
         }
-        
+
         source = getAlbumService().updateSearch(source);
         source = getArtistService().updateSearch(source);
         source = getEventService().updateSearch(source);
         source = getOrganizationService().updateSearch(source);
         source = getProductService().updateSearch(source);
-        
-        
+
         return source;
     }
-    
+
     public DatabaseOperationResult update(MSCEntity entity) {
         EntityManager entityManager = null;
         DatabaseOperationResult result = new DatabaseOperationResult();
@@ -122,7 +125,7 @@ public class FukoDB {
         try {
             entityManager = getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.merge(entity);
+            result.setResult(entityManager.merge(entity));
             entityManager.getTransaction().commit();
 //            result.setSuccess(true);
         } catch (Exception ex) {
@@ -136,5 +139,19 @@ public class FukoDB {
         }
 
         return result;
+    }
+
+    public <T extends MSCEntity> T findById(Class<? extends MSCEntity> entityClass, final long id) {
+        EntityManager entityManager = getEntityManager();
+
+        try {
+            return (T) entityManager.find(entityClass, id);
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
     }
 }

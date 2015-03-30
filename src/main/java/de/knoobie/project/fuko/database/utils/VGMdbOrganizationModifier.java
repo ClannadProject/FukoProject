@@ -57,8 +57,6 @@ public class VGMdbOrganizationModifier {
         organisation.setDescription(StringUtils.trim(source.getDescription()));
         organisation.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
         organisation.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
-        organisation.setClannadAdded(new Date(DateUtils.getNow().getTime()));
-        organisation.setClannadUpdated(organisation.getClannadAdded());
         organisation.setReleases(getOrganisationsRelease(source.getReleases(), organisation));
         VGMdbCommonModifier.addVGMdbMetaData(organisation, source.getMeta());
 

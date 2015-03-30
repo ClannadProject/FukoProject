@@ -108,8 +108,6 @@ public class VGMdbAlbumModifier {
 
         album.setDescription(StringUtils.trim(source.getDescription()));
         album.setMediaFormat(StringUtils.trim(source.getMediaFormat()));
-        album.setClannadAdded(new Date(DateUtils.getNow().getTime()));
-        album.setClannadUpdated(album.getClannadAdded());
 
         album.setPlatforms(ListUtils.getListAsString(source.getPlatforms()));
         album.setRelatedAlbums(transformAlbumList(source.getRelatedAlbums()));

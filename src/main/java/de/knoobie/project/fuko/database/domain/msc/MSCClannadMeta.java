@@ -1,7 +1,7 @@
 package de.knoobie.project.fuko.database.domain.msc;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -13,10 +13,10 @@ public @Getter @Setter abstract class MSCClannadMeta extends MSCVGMdbMeta implem
 
   @Basic
   @Column(nullable = true)
-  private Date clannadAdded;
+  private Timestamp clannadAdded;
   @Basic
   @Column(nullable = true)
-  private Date clannadUpdated;
+  private Timestamp clannadUpdated;
 
   public MSCClannadMeta() {
 

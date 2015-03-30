@@ -45,8 +45,6 @@ public class VGMdbProductModifier {
             return product;
         }
 
-        product.setClannadAdded(new Date(DateUtils.getNow().getTime()));
-        product.setClannadUpdated(product.getClannadAdded());
         product.setDescription(StringUtils.trim(source.getDescription()));
         product.setFranchises(getProductsFromLists(source.getFranchises(), null));
         product.setReleases(getProductReleasesFromLists(source.getReleases()));

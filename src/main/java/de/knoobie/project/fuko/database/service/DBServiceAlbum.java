@@ -1,6 +1,8 @@
 package de.knoobie.project.fuko.database.service;
 
 import de.knoobie.project.fuko.database.domain.Album;
+import de.knoobie.project.fuko.database.domain.AlbumDisc;
+import de.knoobie.project.fuko.database.domain.Picture;
 import de.knoobie.project.fuko.database.domain.Search;
 import java.io.Serializable;
 
@@ -25,7 +27,6 @@ public class DBServiceAlbum extends AbstractDBService<Album> implements Serializ
         album.getRepresentedProducts().replaceAll(database.getProductService()::getORadd);
         album.getRelatedAlbums().replaceAll(this::getORadd);
         album.getReprints().replaceAll(this::getORadd);
-
         return album;
     }
 
