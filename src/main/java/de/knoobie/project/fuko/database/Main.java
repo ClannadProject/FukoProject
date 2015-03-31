@@ -33,7 +33,7 @@ public class Main {
                 Artist artist = Artist.getFromVGMDB(vgmdbArtist);
                 if (artist != null) {
                     System.out.println("artist -> " + artist.getName() + " / " + artist.getLink());
-                    FukoDB.getInstance().getArtistService().updateWithRelations(artist, false);
+                    FukoDB.getInstance().getArtistService().updateWithRelations(artist, true);
                 } else {
                     System.out.println("artist -> null");
                 }
@@ -48,7 +48,7 @@ public class Main {
         }
     }
 
-    private static void addAlbum(int vgmdbID) {
+    private static void addAlbum(int vgmdbID, boolean updateWithRelations) {
         try {
             VGMdbAlbum vgmdbAlbum = VGMdb.getAlbum("" + vgmdbID);
 
@@ -57,7 +57,7 @@ public class Main {
                 Album album = Album.getFromVGMDB(vgmdbAlbum);
                 if (album != null) {
                     System.out.println("album -> " + album.getName() + " / " + album.getLink());
-                    FukoDB.getInstance().getAlbumService().updateWithRelations(album, false);
+                    FukoDB.getInstance().getAlbumService().updateWithRelations(album, updateWithRelations);
                 } else {
                     System.out.println("album -> null");
                 }
@@ -79,7 +79,7 @@ public class Main {
                 Event event = Event.getFromVGMDB(vgmdbEvent);
                 if (event != null) {
                     System.out.println("event -> " + event.getName() + " / " + event.getLink());
-                    FukoDB.getInstance().getEventService().updateWithRelations(event, false);
+                    FukoDB.getInstance().getEventService().updateWithRelations(event, true);
                 } else {
                     System.out.println("event -> null");
                 }
@@ -102,7 +102,7 @@ public class Main {
 //                Organization Organization = Organization.getFromVGMDB(vgmdbOrganisation);
                 if (organizetion != null) {
                     System.out.println("Organization -> " + organizetion.getName() + " / " + organizetion.getLink());
-                    FukoDB.getInstance().getOrganizationService().updateWithRelations(organizetion, false);
+                    FukoDB.getInstance().getOrganizationService().updateWithRelations(organizetion, true);
                 } else {
                     System.out.println("Organization -> null");
                 }
@@ -124,7 +124,7 @@ public class Main {
                 Product product = Product.getFromVGMDB(vgmdbproduct);
                 if (product != null) {
                     System.out.println("product -> " + product.getName() + " / " + product.getLink());
-                    FukoDB.getInstance().getProductService().updateWithRelations(product, false);
+                    FukoDB.getInstance().getProductService().updateWithRelations(product, true);
                 } else {
                     System.out.println("product -> null");
                 }
@@ -143,14 +143,7 @@ public class Main {
 
             if (vgmdbSearch != null) {
                 System.out.println("vgmdbSearch -> " + vgmdbSearch.getQuery() + " / " + vgmdbSearch.getLink());
-                Search search = Search.getFromVGMdb(vgmdbSearch);
-                if (search != null) {
-                    System.out.println("search -> " + search.getQuery() + " / " + search.getLink());
-                    return FukoDB.getInstance().updateSearch(search);
-                } else {
-                    System.out.println("search -> null");
-                    return null;
-                }
+                return Search.getFromVGMdb(vgmdbSearch);
             } else {
                 System.out.println("vgmdbSearch -> null");
                 return null;
@@ -164,9 +157,9 @@ public class Main {
 
     public static void main(String[] args) throws IllegalArgumentException, JsonSyntaxException, IOException {
         initDB();
-        addAlbum(50563);
-        addAlbum(50564);
-        addAlbum(50563);
+        addAlbum(50563, true);
+        addAlbum(50564, true);
+        addAlbum(50563, true);
         
         
                 Album a = FukoDB.getInstance().getAlbumService().findBy(50563);
@@ -197,46 +190,61 @@ public class Main {
         });
         
         
-//        addAlbum(50563);
-//        addOrganisation(1);
-//        addEvent(1);
-//        addEvent(98);
-//        addEvent(54);
-//        addEvent(175);
-//        addEvent(171);
-//        addEvent(123);
-//        addProduct(1018);
-//        addProduct(1019);
-//        addProduct(1020);
-//        addProduct(1021);
-//        addProduct(1022);
-//        addProduct(1023);
-//        addArtist(6);
-//        addAlbum(28329);
-//        addAlbum(5046);
-//        addArtist(11952);
-//        addAlbum(45755);
-//        addAlbum(45756);
-//        addAlbum(46037);
-//        addArtist(7699);
-//        addAlbum(47823);
-//        addAlbum(551);
-//        addAlbum(8930);
-//        Search s = search("kantai");
-//        if (s != null) {
-//            s.getProducts().stream().forEach((product) -> {
-//                addProduct(product.getVgmdbID());
-//            });
-//            s.getOrganizations().stream().forEach((product) -> {
-//                addOrganisation(product.getVgmdbID());
-//            });
-//            s.getArtists().stream().forEach((product) -> {
-//                addArtist(product.getVgmdbID());
-//            });
-//            s.getAlbums().stream().forEach((product) -> {
-//                addAlbum(product.getVgmdbID());
-//            });
-//        }
+        addAlbum(50563, true);
+        addOrganisation(1);
+        addEvent(1);
+        addEvent(98);
+        addEvent(54);
+        addEvent(175);
+        addEvent(171);
+        addEvent(123);
+        addProduct(1018);
+        addProduct(1019);
+        addProduct(1020);
+        addProduct(1021);
+        addProduct(1022);
+        addProduct(1023);
+        addArtist(6);
+        addAlbum(28329, true);
+        addAlbum(5046, true);
+        addArtist(11952);
+        addAlbum(45755, true);
+        addAlbum(45756, true);
+        addAlbum(46037, true);
+        addArtist(7699);
+        addAlbum(47823, true);
+        addAlbum(551, true);
+        addAlbum(8930, true);
+        Search s = search("kantai");
+        if (s != null) {
+            s.getProducts().stream().forEach((product) -> {
+                addProduct(product.getVgmdbID());
+            });
+            s.getOrganizations().stream().forEach((product) -> {
+                addOrganisation(product.getVgmdbID());
+            });
+            s.getArtists().stream().forEach((product) -> {
+                addArtist(product.getVgmdbID());
+            });
+            s.getAlbums().stream().forEach((product) -> {
+                addAlbum(product.getVgmdbID(), true);
+            });
+        }
+        Search clannadErgebnis = search("clannad");
+        if (clannadErgebnis != null) {
+            clannadErgebnis.getProducts().stream().forEach((product) -> {
+                addProduct(product.getVgmdbID());
+            });
+            clannadErgebnis.getOrganizations().stream().forEach((product) -> {
+                addOrganisation(product.getVgmdbID());
+            });
+            clannadErgebnis.getArtists().stream().forEach((product) -> {
+                addArtist(product.getVgmdbID());
+            });
+            clannadErgebnis.getAlbums().stream().forEach((product) -> {
+                addAlbum(product.getVgmdbID(), true);
+            });
+        }
 
 //        Product a = FukoDB.getInstance().getProductService().findBy(1018);
 //        System.out.println("Product: "+ a.getName());

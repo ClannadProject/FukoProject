@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +28,7 @@ abstract class MSCVGMdbEntity extends MSCEntity implements Serializable {
   private Integer vgmdbID;
   @Basic
   @Column(nullable = true)
+  @Enumerated(EnumType.STRING)
   private DataType type;
 //  @Id
   @Basic

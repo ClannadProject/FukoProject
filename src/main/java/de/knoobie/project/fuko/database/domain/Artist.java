@@ -1,5 +1,8 @@
 package de.knoobie.project.fuko.database.domain;
 
+import de.knoobie.project.fuko.database.domain.embeddable.AlbumLink;
+import de.knoobie.project.fuko.database.domain.embeddable.ArtistLink;
+import de.knoobie.project.fuko.database.domain.embeddable.WebsiteLink;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import de.knoobie.project.fuko.database.utils.VGMdbArtistModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbArtist;
@@ -10,8 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -33,11 +41,11 @@ class Artist extends MSCClannadMeta implements Serializable {
     private String creditedWorks;
 
     // getNames means getAliases
-    @Basic
     @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
     private VGMdbArtistType artistType;
 
-    @OneToOne(optional = true, targetEntity = Picture.class)
+    @Embedded
     private Picture picture;
 
     @Basic
@@ -49,42 +57,44 @@ class Artist extends MSCClannadMeta implements Serializable {
     @Basic
     @Column(nullable = true)
     private String bloodtype;
-    @Basic
     @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
     private VGMdbGender gender;
 
     // info -> Units -> BandMemberOf
-    @JoinTable(name = "artist_bandMemberOf")
-    @ManyToMany(targetEntity = Artist.class)
-    private List<Artist> bandMemberOf = new ArrayList<>();
+    @ElementCollection(targetClass = ArtistLink.class)
+    @CollectionTable(name = "artist_bandMemberOf")
+    private List<ArtistLink> bandMemberOf = new ArrayList<>();
+
+    @ElementCollection(targetClass = ArtistLink.class)
+    @CollectionTable(name = "artist_member")
+    private List<ArtistLink> currentMember = new ArrayList<>();
+
+    @ElementCollection(targetClass = ArtistLink.class)
+    @CollectionTable(name = "artist_formerMember")
+    private List<ArtistLink> formerMember = new ArrayList<>();
+
+    @ElementCollection(targetClass = AlbumLink.class)
+    @CollectionTable(name = "artist_discography")
+    private List<AlbumLink> discography = new ArrayList<>();
+
+    @ElementCollection(targetClass = AlbumLink.class)
+    @CollectionTable(name = "artist_featured_on")
+    private List<AlbumLink> featuredOn = new ArrayList<>();
 
     @Basic
     @Column(nullable = true)
     private String formed;
-
-    @JoinTable(name = "artist_Member")
-    @ManyToMany(targetEntity = Artist.class)
-    private List<Artist> member = new ArrayList<>();
-
-    @JoinTable(name = "artist_formerMember")
-    @ManyToMany(targetEntity = Artist.class)
-    private List<Artist> formerMember = new ArrayList<>();
-
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "artist")
-    private List<ArtistRelease> discography = new ArrayList<>();
-
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "artist")
-    private List<ArtistRelease> featuredOn = new ArrayList<>();
-
-    @JoinColumn(nullable = true)
-    @ManyToMany(targetEntity = Website.class, cascade = CascadeType.ALL)
-    private List<Website> websites = new ArrayList<>();
+    
+    @ElementCollection(targetClass = WebsiteLink.class)
+    @CollectionTable(name = "artist_websites")
+    private List<WebsiteLink> websites = new ArrayList<>();
 
     public Artist() {
 
     }
 
-    public static Artist getFromVGMDB(VGMdbArtist artist){
+    public static Artist getFromVGMDB(VGMdbArtist artist) {
         return VGMdbArtistModifier.transformVGMdbArtist(artist, false);
     }
 

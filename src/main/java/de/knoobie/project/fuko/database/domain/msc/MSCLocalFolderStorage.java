@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @MappedSuperclass
-public @Getter @Setter abstract class MSCLocalFolderStorage extends MSCEntity implements Serializable {
+public @Getter @Setter abstract class MSCLocalFolderStorage extends MSCVGMdbEntity implements Serializable {
 
   @Basic
   @Column(nullable = true)

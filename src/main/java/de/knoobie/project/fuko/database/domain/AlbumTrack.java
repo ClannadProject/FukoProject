@@ -1,5 +1,6 @@
 package de.knoobie.project.fuko.database.domain;
 
+import de.knoobie.project.fuko.database.domain.msc.MSCEntity;
 import de.knoobie.project.fuko.database.domain.msc.MSCLocalFileStorage;
 import java.io.Serializable;
 import java.util.ArrayList;

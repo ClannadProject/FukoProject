@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VGMdbEventModifier {
-    
 
     public static List<EventLink> getLinks(List<VGMdbEvent> source) {
         List<EventLink> links = new ArrayList<>();
@@ -33,21 +32,19 @@ public class VGMdbEventModifier {
         if (source == null) {
             return null;
         }
-
+        EventLink link = new EventLink();
         List<VGMdbName> names = new ArrayList<>();
         if (!StringUtils.isEmpty(source.getName())) {
             names.add(new VGMdbName(StringUtils.trim(source.getName()), VGMdbNameLanguage.eng));
         }
         if (!StringUtils.isEmpty(source.getShortname())) {
-            names.add(new VGMdbName(StringUtils.trim(source.getShortname()), VGMdbNameLanguage.alias));
+            link.setShortname(StringUtils.trim(source.getShortname()));
         }
-        
-        EventLink link = new EventLink();
         VGMdbCommonModifier.updateLink(link, names, source.getLink());
         return link;
     }
-    
-        public static List<Event> transformEventList(List<VGMdbEvent> source) {
+
+    public static List<Event> transformEventList(List<VGMdbEvent> source) {
         List<Event> events = new ArrayList<>();
 
         if (ListUtils.isEmpty(source)) {
@@ -74,12 +71,12 @@ public class VGMdbEventModifier {
         event.setEndDate(StringUtils.trim(source.getEnddate()));
         event.setDescription(StringUtils.trim(source.getDescription()));
         event.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
-        event.setReleases(VGMdbAlbumModifier.transformEventReleaseList(source.getReleases()));
-        if(!StringUtils.isEmpty(source.getShortname())){
+        event.setReleases(VGMdbAlbumModifier.getEventReleaseLinks(source.getReleases()));
+        if (!StringUtils.isEmpty(source.getShortname())) {
             Name name = new Name();
             name.setName(StringUtils.trim(source.getShortname()));
             name.setNameLanguage(VGMdbNameLanguage.alias);
-            if(event.getNames() == null){
+            if (event.getNames() == null) {
                 event.setNames(new ArrayList<>());
             }
             event.getNames().add(name);

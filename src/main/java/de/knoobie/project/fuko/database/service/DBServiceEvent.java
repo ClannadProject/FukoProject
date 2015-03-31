@@ -1,10 +1,8 @@
 package de.knoobie.project.fuko.database.service;
 
 import de.knoobie.project.fuko.database.domain.Event;
-import de.knoobie.project.fuko.database.domain.Search;
-import java.io.Serializable;
 
-public class DBServiceEvent extends AbstractDBService<Event> implements Serializable {
+public class DBServiceEvent extends AbstractDBService<Event>{
 
     DBServiceEvent(final FukoDB database) {
        super(database);
@@ -18,12 +16,6 @@ public class DBServiceEvent extends AbstractDBService<Event> implements Serializ
 
     @Override
     protected Event updateDatabaseRelations(Event event) {
-      event.getReleases().replaceAll(database.getAlbumService()::getORadd);
       return event;
-    }
-    
-    @Override
-    public Search updateSearch(Search arg) {
-        return arg;
     }
 }

@@ -1,5 +1,6 @@
 package de.knoobie.project.fuko.database.domain;
 
+import de.knoobie.project.fuko.database.domain.msc.MSCEntity;
 import de.knoobie.project.fuko.database.domain.msc.MSCLocalFolderStorage;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-public @Getter @Setter class AlbumDisc extends MSCLocalFolderStorage implements Serializable {
+public @Getter @Setter class AlbumDisc extends MSCEntity implements Serializable {
   
   @Basic
   @Column(nullable = true)
@@ -25,7 +26,7 @@ public @Getter @Setter class AlbumDisc extends MSCLocalFolderStorage implements 
   @ManyToOne(optional = true, targetEntity = Album.class)
   private Album album;  
 
-  @OneToMany(targetEntity = AlbumTrack.class, mappedBy = "cd")
+  @OneToMany(targetEntity = AlbumTrack.class, mappedBy = "cd", orphanRemoval = true)
   private List<AlbumTrack> tracks = new ArrayList<>();
 
   public AlbumDisc() {

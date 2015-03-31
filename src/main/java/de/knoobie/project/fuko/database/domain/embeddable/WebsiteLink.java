@@ -1,7 +1,6 @@
 package de.knoobie.project.fuko.database.domain.embeddable;
 
-import de.knoobie.project.fuko.database.bo.enums.DataType;
-import javax.persistence.Basic;
+import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbWebsiteType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -12,18 +11,13 @@ import lombok.Setter;
 @Embeddable
 public @Getter
 @Setter
-class EventLink extends Link {
+class WebsiteLink extends Link {
 
     @Column(nullable = true)
     @Enumerated(EnumType.STRING)
-    private DataType type = DataType.EVENT;
-    
-    @Basic
-    @Column(nullable = true)
-    private String shortname;
+    private VGMdbWebsiteType websiteType;
 
-    public EventLink() {
+    public WebsiteLink() {
     }
-    
-    
+
 }

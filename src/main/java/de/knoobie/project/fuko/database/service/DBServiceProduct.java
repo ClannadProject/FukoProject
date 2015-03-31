@@ -1,10 +1,8 @@
 package de.knoobie.project.fuko.database.service;
 
 import de.knoobie.project.fuko.database.domain.Product;
-import de.knoobie.project.fuko.database.domain.Search;
-import java.io.Serializable;
 
-public class DBServiceProduct extends AbstractDBService<Product> implements Serializable {
+public class DBServiceProduct extends AbstractDBService<Product>{
 
     DBServiceProduct(final FukoDB database) {
         super(database);
@@ -17,15 +15,6 @@ public class DBServiceProduct extends AbstractDBService<Product> implements Seri
 
     @Override
     protected Product updateDatabaseRelations(Product product) {
-        product.getFranchises().replaceAll(this::getORadd);
-        product.getTitles().replaceAll(this::getORadd);
-        product.getRelatedAlbums().replaceAll(database.getAlbumService()::getORadd);
         return product;
-    }
-    
-    @Override
-    public Search updateSearch(Search arg) {
-        arg.getProducts().replaceAll(this::getORadd);
-        return arg;
     }
 }

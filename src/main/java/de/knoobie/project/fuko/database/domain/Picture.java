@@ -4,16 +4,16 @@ import de.knoobie.project.fuko.database.domain.msc.MSCLocalFileStorage;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-public @Getter @Setter class Picture extends MSCLocalFileStorage implements Serializable {
+@Embeddable
+public @Getter @Setter class Picture implements Serializable {
 
   @Basic
   @Column(nullable = true)
-  private String name;
+  private boolean cover;
   @Basic
   @Column(nullable = true)
   private String urlSmall;
@@ -22,42 +22,21 @@ public @Getter @Setter class Picture extends MSCLocalFileStorage implements Seri
   private String urlThumbnail;
   @Basic
   @Column(nullable = true)
-  private String urlFull;
+  private String urlFull;  
+    @Basic
+  @Column(nullable = true)
+  private boolean pictureLocaleStorage;
+  @Basic
+  @Column(nullable = true)
+  private String pictureName;
+  @Basic
+  @Column(nullable = true)
+  private String pictureLocation;
+  @Basic
+  @Column(nullable = true)
+  private String pictureExtension;
 
   public Picture() {
 
   }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getUrlSmall() {
-    return urlSmall;
-  }
-
-  public void setUrlSmall(String urlSmall) {
-    this.urlSmall = urlSmall;
-  }
-
-  public String getUrlThumbnail() {
-    return urlThumbnail;
-  }
-
-  public void setUrlThumbnail(String urlThumbnail) {
-    this.urlThumbnail = urlThumbnail;
-  }
-
-  public String getUrlFull() {
-    return urlFull;
-  }
-
-  public void setUrlFull(String urlFull) {
-    this.urlFull = urlFull;
-  }
-
 }

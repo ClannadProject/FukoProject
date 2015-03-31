@@ -4,18 +4,47 @@ import de.knoobie.project.clannadutils.common.ListUtils;
 import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Product;
-import de.knoobie.project.fuko.database.domain.ProductRelease;
 import de.knoobie.project.fuko.database.domain.embeddable.ProductLink;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbProduct;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbProductMerchandise;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
-import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbProductType;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VGMdbProductModifier {
+    
+    public static List<ProductLink> getMerchandiseLinks(List<VGMdbProductMerchandise> source) {
+        List<ProductLink> links = new ArrayList<>();
 
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((merchandise) -> {
+            links.add(getMerchandiseLink(merchandise));
+        });
+
+        return links;
+    }
+
+    public static ProductLink getMerchandiseLink(VGMdbProductMerchandise source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!ListUtils.isEmpty(source.getNames())) {
+            names.addAll(source.getNames());
+        }
+        ProductLink link = new ProductLink();
+        link.setPlatform(StringUtils.trim(source.getPlatform()));
+        link.setRegion(StringUtils.trim(source.getRegion()));
+        link.setReleaseDate(StringUtils.trim(source.getDate()));
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }
+    
     public static List<ProductLink> getLinks(List<VGMdbProduct> source) {
         List<ProductLink> links = new ArrayList<>();
 
@@ -78,61 +107,17 @@ public class VGMdbProductModifier {
         }
 
         product.setDescription(StringUtils.trim(source.getDescription()));
-        product.setFranchises(getProductsFromLists(source.getFranchises(), null));
-        product.setReleases(getProductReleasesFromLists(source.getReleases()));
-        product.setTitles(getProductsFromLists(source.getTitles(), null));
+        product.setFranchises(getMerchandiseLinks(source.getFranchises()));
+        product.setReleases(getMerchandiseLinks(source.getReleases()));
+        product.setTitles(getMerchandiseLinks(source.getTitles()));
         product.setProductType(source.getType());
         product.setOrganizations(StringUtils.trim(source.getOrganizations()));
-        product.setWebsites(VGMdbCommonModifier.getModifiedWebsites(source.getWebsites()));
-        product.setRelatedAlbums(VGMdbAlbumModifier.transformAlbumList(source.getAlbums()));
+        product.setWebsites(VGMdbCommonModifier.getWebsiteLinks(source.getWebsites()));
+        product.setRelatedAlbums(VGMdbAlbumModifier.getAlbumLinks(source.getAlbums()));
         product.setReleaseDate(StringUtils.trim(source.getReleaseDate()));
         product.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
-        product.setPicture(VGMdbCommonModifier.getModifiedPicture(source.getPicture()));
+        product.setPicture(VGMdbCommonModifier.getModifiedPicture(source.getPicture(), true));
 
         return product;
-    }
-
-    private static List<ProductRelease> getProductReleasesFromLists(List<VGMdbProductMerchandise> source) {
-        List<ProductRelease> products = new ArrayList<>();
-        if (ListUtils.isEmpty(source)) {
-            return products;
-        }
-
-        source.stream().forEach((sourceProduct) -> {
-            if (!StringUtils.isEmpty(sourceProduct.getLink())) {
-                ProductRelease product = new ProductRelease();
-                product.setNames(VGMdbCommonModifier.getModifiedNames(sourceProduct.getNames()));
-                product.setReleaseDate(StringUtils.trim(sourceProduct.getDate()));
-                product.setPlatform(StringUtils.trim(sourceProduct.getPlatform()));
-                product.setRegion(StringUtils.trim(sourceProduct.getRegion()));
-                VGMdbCommonModifier.addVGMdbID(product, sourceProduct.getLink(), DataType.RELEASE);
-
-                products.add(product);
-            }
-        });
-
-        return products;
-    }
-
-    private static List<Product> getProductsFromLists(List<VGMdbProductMerchandise> source, VGMdbProductType productType) {
-        List<Product> products = new ArrayList<>();
-        if (ListUtils.isEmpty(source)) {
-            return products;
-        }
-
-        source.stream().forEach((sourceProduct) -> {
-            if (!StringUtils.isEmpty(sourceProduct.getLink())) {
-                Product product = new Product();
-                product.setNames(VGMdbCommonModifier.getModifiedNames(sourceProduct.getNames()));
-                product.setReleaseDate(StringUtils.trim(sourceProduct.getDate()));
-                VGMdbCommonModifier.addVGMdbID(product, sourceProduct.getLink(), DataType.PRODUCT);
-                if (productType != null) {
-                    product.setProductType(productType);
-                }
-                products.add(product);
-            }
-        });
-
-        return products;
     }
 }

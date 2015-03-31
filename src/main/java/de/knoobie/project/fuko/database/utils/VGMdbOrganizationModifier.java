@@ -5,7 +5,6 @@ import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Organization;
-import de.knoobie.project.fuko.database.domain.OrganizationRelease;
 import de.knoobie.project.fuko.database.domain.embeddable.OrganizationLink;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbOrganisation;
@@ -76,7 +75,7 @@ public class VGMdbOrganizationModifier {
         Organization organisation = new Organization();
         organisation.setName(StringUtils.trim(source.getName()));
         organisation.setNames(VGMdbCommonModifier.getModifiedNames(source.getAliases()));
-        organisation.setPicture(VGMdbCommonModifier.getModifiedPicture(source.getPicture()));
+        organisation.setPicture(VGMdbCommonModifier.getModifiedPicture(source.getPicture(), true));
         VGMdbCommonModifier.addVGMdbID(organisation, source.getLink(), DataType.ORGANIZATION);
 
         if (incompleteSource) {
@@ -85,7 +84,7 @@ public class VGMdbOrganizationModifier {
         organisation.setDescription(StringUtils.trim(source.getDescription()));
         organisation.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
         organisation.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
-        organisation.setReleases(getOrganisationsRelease(source.getReleases(), organisation));
+        organisation.setReleases(VGMdbAlbumModifier.getOrganisationsReleaseLinks(source.getReleases()));
         VGMdbCommonModifier.addVGMdbMetaData(organisation, source.getMeta());
 
         return organisation;
@@ -101,67 +100,5 @@ public class VGMdbOrganizationModifier {
         VGMdbCommonModifier.addVGMdbID(organisation, source.getLink(), DataType.ORGANIZATION);
 
         return organisation;
-    }
-
-    public static List<OrganizationRelease> transformVGMdbPersonToRelease(Album album, VGMdbPerson source, String role) {
-        List<OrganizationRelease> releases = new ArrayList<>();
-        if (source == null) {
-            return releases;
-        }
-
-        OrganizationRelease release = new OrganizationRelease();
-        release.setAlbum(album);
-        release.setPublisher(transformVGMdbPerson(source));
-        release.setOrganizationRole(StringUtils.trim(role));
-
-        releases.add(release);
-
-        return releases;
-    }
-
-    public static List<OrganizationRelease> transformVGMdbOrganisationToRelease(Album album, VGMdbOrganisation source, String role) {
-        List<OrganizationRelease> releases = new ArrayList<>();
-        if (source == null) {
-            return releases;
-        }
-
-        OrganizationRelease release = new OrganizationRelease();
-        release.setAlbum(album);
-        release.setPublisher(transformVGMdbOrganisation(source, true));
-        release.setOrganizationRole(StringUtils.trim(role));
-
-        releases.add(release);
-
-        return releases;
-    }
-
-    public static List<OrganizationRelease> getOrganisationsRelease(List<VGMdbOrganisationRelease> source, Organization org) {
-        List<OrganizationRelease> releases = new ArrayList<>();
-
-        if (ListUtils.isEmpty(source)) {
-            return releases;
-        }
-
-        source.stream().forEach((sourceRelease) -> {
-            if (!StringUtils.isEmpty(sourceRelease.getLink())) {
-
-                OrganizationRelease release = new OrganizationRelease();
-                release.setReleaseEvent(VGMdbEventModifier.transformVGMdbEvent(sourceRelease.getEvent(), true));
-
-                Album album = new Album();
-                album.setReleaseDate(StringUtils.trim(sourceRelease.getDate()));
-                album.setAlbumType(StringUtils.trim(sourceRelease.getType()));
-                album.setNames(VGMdbCommonModifier.getModifiedNames(sourceRelease.getNames()));
-                album.setAlbumCatalog(StringUtils.trim(sourceRelease.getCatalog()));
-                VGMdbCommonModifier.addVGMdbID(album, sourceRelease.getLink(), DataType.ALBUM);
-
-                release.setAlbum(album);
-                release.setOrganizationRole(StringUtils.trim(sourceRelease.getRole()));
-                release.setPublisher(org);
-                releases.add(release);
-            }
-        });
-
-        return releases;
     }
 }

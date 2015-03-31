@@ -97,20 +97,6 @@ public class FukoDB {
         return organizationService;
     }
 
-    public Search updateSearch(Search source) {
-        if (source == null) {
-            return null;
-        }
-
-        source = getAlbumService().updateSearch(source);
-        source = getArtistService().updateSearch(source);
-        source = getEventService().updateSearch(source);
-        source = getOrganizationService().updateSearch(source);
-        source = getProductService().updateSearch(source);
-
-        return source;
-    }
-
     public DatabaseOperationResult update(MSCEntity entity) {
         EntityManager entityManager = null;
         DatabaseOperationResult result = new DatabaseOperationResult();

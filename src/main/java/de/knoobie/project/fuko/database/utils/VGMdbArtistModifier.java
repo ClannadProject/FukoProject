@@ -75,7 +75,7 @@ public class VGMdbArtistModifier {
 
         artist.setName(StringUtils.trim(source.getName()));
         artist.setNames(VGMdbCommonModifier.getModifiedNames(source.getAliases()));
-        artist.setPicture(VGMdbCommonModifier.getModifiedPicture(source.getPicture()));
+        artist.setPicture(VGMdbCommonModifier.getModifiedPicture(source.getPicture(), true));
         VGMdbCommonModifier.addVGMdbID(artist, source.getLink(), DataType.ARTIST);
 
         if (source.getType() != null) {
@@ -89,8 +89,8 @@ public class VGMdbArtistModifier {
         artist.setCreditedWorks(ListUtils.getListAsString(source.getCreditedWorks()));
         artist.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
         artist.setDescription(StringUtils.trim(source.getDescription()));
-        artist.setDiscography(VGMdbCommonModifier.getModifiedArtistsAlbums(artist, source.getDiscography()));
-        artist.setFeaturedOn(VGMdbCommonModifier.getModifiedArtistsAlbums(artist, source.getFeaturedOn()));
+        artist.setDiscography(VGMdbAlbumModifier.getDiscograhpyLinks(source.getDiscography()));
+        artist.setFeaturedOn(VGMdbAlbumModifier.getDiscograhpyLinks(source.getFeaturedOn()));
 
         if (source.getType() != null) {
             switch (source.getType()) {
@@ -100,14 +100,14 @@ public class VGMdbArtistModifier {
                         artist.setBirthplace(StringUtils.trim(source.getPersonInfo().getBirthplace()));
                         artist.setBloodtype(StringUtils.trim(source.getPersonInfo().getBloodtype()));
                         artist.setGender(source.getPersonInfo().getGender());
-                        artist.setBandMemberOf(VGMdbCommonModifier.getModifiedPersons(source.getPersonInfo().getBandMemberOf()));
+                        artist.setBandMemberOf(VGMdbPersonModifier.getArtistLinks(source.getPersonInfo().getBandMemberOf()));
                     }
                     break;
                 case unit:
                     if (source.getBandInfo() != null) {
                         artist.setFormed(StringUtils.trim(source.getBandInfo().getFormed()));
-                        artist.setMember(VGMdbCommonModifier.getModifiedPersons(source.getBandInfo().getMember()));
-                        artist.setFormerMember(VGMdbCommonModifier.getModifiedPersons(source.getBandInfo().getFormerMember()));
+                        artist.setCurrentMember(VGMdbPersonModifier.getArtistLinks(source.getBandInfo().getMember()));
+                        artist.setFormerMember(VGMdbPersonModifier.getArtistLinks(source.getBandInfo().getFormerMember()));
                     }
                     break;
             }
@@ -123,7 +123,7 @@ public class VGMdbArtistModifier {
         }
 
         VGMdbCommonModifier.addVGMdbMetaData(artist, source.getMeta());
-        artist.setWebsites(VGMdbCommonModifier.getModifiedWebsites(source.getWebsites()));
+        artist.setWebsites(VGMdbCommonModifier.getWebsiteLinks(source.getWebsites()));
 
         return artist;
     }

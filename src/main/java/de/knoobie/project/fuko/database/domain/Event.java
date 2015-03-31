@@ -1,5 +1,6 @@
 package de.knoobie.project.fuko.database.domain;
 
+import de.knoobie.project.fuko.database.domain.embeddable.AlbumLink;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import de.knoobie.project.fuko.database.utils.VGMdbEventModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbEvent;
@@ -9,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -32,9 +35,9 @@ class Event extends MSCClannadMeta implements Serializable {
     @Column(nullable = true)
     private String shortName;
 
-    @ManyToMany(targetEntity = Album.class)
-    @JoinTable(name = "event_album_releases")
-    private List<Album> releases = new ArrayList<>();
+    @ElementCollection(targetClass = AlbumLink.class)
+    @CollectionTable(name = "event_album_releases")
+    private List<AlbumLink> releases = new ArrayList<>();
 
     public Event() {
 

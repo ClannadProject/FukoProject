@@ -2,9 +2,8 @@ package de.knoobie.project.fuko.database.service;
 
 import de.knoobie.project.clannadutils.common.DateUtils;
 import de.knoobie.project.fuko.database.bo.DatabaseOperationResult;
-import de.knoobie.project.fuko.database.domain.Search;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
-import java.sql.Date;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -12,7 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public abstract class AbstractDBService<T extends MSCClannadMeta> {
+public abstract class AbstractDBService<T extends MSCClannadMeta> implements Serializable {
 
     public final FukoDB database;
     public static final String VGMDB_COLUMN_ID = "vgmdbID";
@@ -26,9 +25,6 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> {
         this.database = database;
     }
 
-//    public DBResult add(T args){
-//        
-//    };
     public T getORadd(T source) {
         T realObject = findBy(source.getVgmdbID());
         if (realObject == null) {
@@ -61,28 +57,22 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> {
     }
 
     public DatabaseOperationResult updateWithRelations(T object, boolean forceUpdate) {
-        object.setId(getID(object.getVgmdbID()));
+        T dbObject = findBy(object.getVgmdbID());
+        if (dbObject != null) {
+            object.setId(dbObject.getId());
+            object.setClannadAdded(dbObject.getClannadAdded());
+            object.setClannadUpdated(new Timestamp(DateUtils.getTimestampNow().getTime()));
+        } else {
+            if (object.getClannadAdded() == null) {
+                object.setClannadAdded(new Timestamp(DateUtils.getTimestampNow().getTime()));
+            }
+        }
+
         object = updateDatabaseRelations(object);
         return database.update(object);
-//        T dbObject = findBy(object.getVgmdbID());
-//        if (forceUpdate || dbObject == null || dbObject.getClannadAdded() == null) {
-//            object.setId(getID(object.getVgmdbID()));
-//            object.setClannadAdded(new Timestamp(DateUtils.getTimestampNow().getTime()));
-//            object.setClannadUpdated(object.getClannadAdded());
-//            object = updateDatabaseRelations(object);
-//            return database.update(object);
-//        }
-//
-//        DatabaseOperationResult result = new DatabaseOperationResult();
-//        result.setSuccess(true);
-//        result.setResult(object);
-//        result.setMessage("No Database Operation executed, data already up to date.");
-//        return result;
     }
 
     public abstract T findBy(int vgmdbID);
 
     protected abstract T updateDatabaseRelations(T object);
-
-    public abstract Search updateSearch(Search object);
 }

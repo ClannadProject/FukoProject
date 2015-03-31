@@ -13,15 +13,115 @@ import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbumDisc;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbumReprint;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbumTrack;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbDiscography;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbEventRelease;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbOrganisationRelease;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VGMdbAlbumModifier {
 
-        public static List<AlbumLink> getAlbumLinks(List<VGMdbAlbum> source) {
+    public static List<AlbumLink> getOrganisationsReleaseLinks(List<VGMdbOrganisationRelease> source) {
+        List<AlbumLink> links = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((orgRelease) -> {
+            links.add(getOrganisationsReleaseLink(orgRelease));
+        });
+
+        return links;
+    }
+
+    public static AlbumLink getOrganisationsReleaseLink(VGMdbOrganisationRelease source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!ListUtils.isEmpty(source.getNames())) {
+            names.addAll(source.getNames());
+        }
+        AlbumLink link = new AlbumLink();
+        link.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
+        link.setReleaseDate(StringUtils.trim(source.getDate()));
+        link.setReleaseType(StringUtils.trim(source.getType()));
+        link.setRole(StringUtils.trim(source.getRole()));
+        link.setReleaseEvent(VGMdbEventModifier.getLink(source.getEvent()));
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }    
+    
+    public static List<AlbumLink> getEventReleaseLinks(List<VGMdbEventRelease> source) {
+        List<AlbumLink> links = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((eventRelease) -> {
+            links.add(getEventReleaseLink(eventRelease));
+        });
+
+        return links;
+    }
+
+    public static AlbumLink getEventReleaseLink(VGMdbEventRelease source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!ListUtils.isEmpty(source.getNames())) {
+            names.addAll(source.getNames());
+        }
+        AlbumLink link = new AlbumLink();
+        link.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
+        link.setReleaseDate(StringUtils.trim(source.getReleaseDate()));
+        link.setReleaseType(StringUtils.trim(source.getReleaseType()));
+        link.setAlbumType(StringUtils.trim(source.getAlbumType()));
+        link.setPublisher(VGMdbPersonModifier.getOrganizationLink(source.getPublisher()));
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }
+    
+    public static List<AlbumLink> getDiscograhpyLinks(List<VGMdbDiscography> source) {
+        List<AlbumLink> links = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((discograhpy) -> {
+            links.add(getDiscograhpyLink(discograhpy));
+        });
+
+        return links;
+    }
+
+    public static AlbumLink getDiscograhpyLink(VGMdbDiscography source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!ListUtils.isEmpty(source.getNames())) {
+            names.addAll(source.getNames());
+        }
+        AlbumLink link = new AlbumLink();
+        link.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
+        link.setReleaseDate(StringUtils.trim(source.getDate()));
+        link.setAlbumType(StringUtils.trim(source.getType()));
+        link.setRole(ListUtils.getListAsString(source.getRoles()));
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }
+
+    public static List<AlbumLink> getAlbumLinks(List<VGMdbAlbum> source) {
         List<AlbumLink> links = new ArrayList<>();
 
         if (ListUtils.isEmpty(source)) {
@@ -54,7 +154,6 @@ public class VGMdbAlbumModifier {
         return link;
     }
 
-    
     public static List<AlbumLink> getAlbumReprintLinks(List<VGMdbAlbumReprint> source) {
         List<AlbumLink> links = new ArrayList<>();
 
@@ -84,9 +183,6 @@ public class VGMdbAlbumModifier {
         return link;
     }
 
- 
-    
-    
     public static List<Album> transformEventReleaseList(List<VGMdbEventRelease> source) {
         List<Album> albums = new ArrayList<>();
 
@@ -132,21 +228,21 @@ public class VGMdbAlbumModifier {
 
         source.stream().forEach((sourceAlbum) -> {
             if (!StringUtils.isEmpty(sourceAlbum.getLink())) {
-                albums.add(transformVGMdbAlbum(sourceAlbum, true));
+                albums.add(transformVGMdbAlbum(sourceAlbum));
             }
         });
 
         return albums;
     }
 
-    public static Album transformVGMdbAlbum(VGMdbAlbum source, boolean incompleteSource) {
+    public static Album transformVGMdbAlbum(VGMdbAlbum source) {
         if (source == null) {
             return null;
         }
 
         Album album = new Album();
 
-        album.setCover(VGMdbCommonModifier.getModifiedPicture(source.getPicture()));
+//        album.setCover(VGMdbCommonModifier.getModifiedPicture(source.getPicture()));
         album.setReleaseDate(StringUtils.trim(source.getReleaseDate()));
         album.setAlbumType(StringUtils.trim(source.getType()));
         album.setName(StringUtils.trim(source.getName()));
@@ -159,10 +255,6 @@ public class VGMdbAlbumModifier {
         }
         VGMdbCommonModifier.addVGMdbID(album, source.getLink(), DataType.ALBUM);
 
-        if (incompleteSource) {
-            return album;
-        }
-
         album.setArrangers(VGMdbPersonModifier.getArtistLinks(source.getArrangers()));
         album.setComposers(VGMdbPersonModifier.getArtistLinks(source.getComposers()));
         album.setLyricists(VGMdbPersonModifier.getArtistLinks(source.getLyricists()));
@@ -171,6 +263,10 @@ public class VGMdbAlbumModifier {
         album.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
 
         album.setPictures(VGMdbCommonModifier.getModifiedPictures(source.getPictures()));
+        if(album.getPictures() == null){
+            album.setPictures(new ArrayList<>());
+        }
+        album.getPictures().add(VGMdbCommonModifier.getModifiedPicture(source.getPicture(), true));
 
         OrganizationLink distributor = VGMdbOrganizationModifier.getLink(source.getDistributor());
         if (distributor != null) {
@@ -247,6 +343,7 @@ public class VGMdbAlbumModifier {
             track.setNames(VGMdbCommonModifier.getModifiedNames(sourceTrack.getNames()));
             track.setTrackLength(StringUtils.trim(sourceTrack.getTrackLength()));
             track.setTrackPosition(source.indexOf(sourceTrack) + 1);
+            track.setCd(albumDisc);
             tracks.add(track);
 
         });

@@ -3,9 +3,9 @@ package de.knoobie.project.fuko.database.domain;
 import de.knoobie.project.fuko.database.domain.embeddable.AlbumLink;
 import de.knoobie.project.fuko.database.domain.embeddable.ArtistLink;
 import de.knoobie.project.fuko.database.domain.embeddable.EventLink;
-import de.knoobie.project.fuko.database.domain.embeddable.Link;
 import de.knoobie.project.fuko.database.domain.embeddable.OrganizationLink;
 import de.knoobie.project.fuko.database.domain.embeddable.ProductLink;
+import de.knoobie.project.fuko.database.domain.embeddable.WebsiteLink;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import de.knoobie.project.fuko.database.utils.VGMdbAlbumModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
@@ -16,6 +16,7 @@ import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -67,14 +68,9 @@ class Album extends MSCClannadMeta implements Serializable {
     @Basic
     @Column(nullable = true)
     private Boolean reprint;
-    @Basic
-    @Column(nullable = true)
-    private Boolean localStorage;
-
-    @OneToOne(optional = true, targetEntity = Picture.class)
-    private Picture cover;
-
-    @ManyToMany(targetEntity = Picture.class)
+    
+    @ElementCollection(targetClass = Picture.class)
+    @CollectionTable(name = "album_pictures")
     private List<Picture> pictures = new ArrayList<>();
 
     @ElementCollection(targetClass = ArtistLink.class)
@@ -93,7 +89,7 @@ class Album extends MSCClannadMeta implements Serializable {
     @CollectionTable(name = "album_lyricists")
     private List<ArtistLink> lyricists = new ArrayList<>();
 
-    @OneToMany(targetEntity = AlbumDisc.class, mappedBy = "album")
+    @OneToMany(targetEntity = AlbumDisc.class, mappedBy = "album", orphanRemoval = true)
     @JoinTable(name = "album_cds")
     private List<AlbumDisc> discs = new ArrayList<>();
     
@@ -117,9 +113,6 @@ class Album extends MSCClannadMeta implements Serializable {
     @CollectionTable(name = "album_related_albums")
     private List<AlbumLink> relatedAlbums = new ArrayList<>();
 
-    @ManyToMany(targetEntity = Website.class)
-    private List<Website> websites = new ArrayList<>();
-
     @ElementCollection(targetClass = EventLink.class)
     @CollectionTable(name = "album_release_events")
     private List<EventLink> releaseEvents = new ArrayList<>();
@@ -129,7 +122,7 @@ class Album extends MSCClannadMeta implements Serializable {
     }
 
     public static Album getFromVGMDB(VGMdbAlbum album) {
-        return VGMdbAlbumModifier.transformVGMdbAlbum(album, false);
+        return VGMdbAlbumModifier.transformVGMdbAlbum(album);
     }
 
 }
