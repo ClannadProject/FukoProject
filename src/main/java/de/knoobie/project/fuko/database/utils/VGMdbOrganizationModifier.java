@@ -1,24 +1,52 @@
 package de.knoobie.project.fuko.database.utils;
 
-import de.knoobie.project.clannadutils.common.DateUtils;
 import de.knoobie.project.clannadutils.common.ListUtils;
 import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Organization;
 import de.knoobie.project.fuko.database.domain.OrganizationRelease;
+import de.knoobie.project.fuko.database.domain.embeddable.OrganizationLink;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbOrganisation;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbOrganisationRelease;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbPerson;
-import java.sql.Date;
+import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author cKnoobie
- */
 public class VGMdbOrganizationModifier {
+
+    public static List<OrganizationLink> getLinks(List<VGMdbOrganisation> source) {
+        List<OrganizationLink> links = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((org) -> {
+            links.add(getLink(org));
+        });
+
+        return links;
+    }
+
+    public static OrganizationLink getLink(VGMdbOrganisation source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!StringUtils.isEmpty(source.getName())) {
+            names.add(new VGMdbName(StringUtils.trim(source.getName()), VGMdbNameLanguage.eng));
+        }
+        if (!ListUtils.isEmpty(source.getAliases())) {
+            names.addAll(source.getAliases());
+        }
+        OrganizationLink link = new OrganizationLink();
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }
 
     public static List<Organization> transformOrganisationList(List<VGMdbOrganisation> source) {
         List<Organization> organisations = new ArrayList<>();
@@ -40,7 +68,7 @@ public class VGMdbOrganizationModifier {
         if (source == null) {
             return null;
         }
-        
+
         if (StringUtils.isEmpty(source.getLink())) {
             return null;
         }

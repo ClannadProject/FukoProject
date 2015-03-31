@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.knoobie.project.fuko.database.utils;
 
 import de.knoobie.project.clannadutils.common.ListUtils;
@@ -10,16 +5,47 @@ import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Event;
 import de.knoobie.project.fuko.database.domain.Name;
+import de.knoobie.project.fuko.database.domain.embeddable.EventLink;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbEvent;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author cKnoobie
- */
 public class VGMdbEventModifier {
+    
+
+    public static List<EventLink> getLinks(List<VGMdbEvent> source) {
+        List<EventLink> links = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((org) -> {
+            links.add(getLink(org));
+        });
+
+        return links;
+    }
+
+    public static EventLink getLink(VGMdbEvent source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!StringUtils.isEmpty(source.getName())) {
+            names.add(new VGMdbName(StringUtils.trim(source.getName()), VGMdbNameLanguage.eng));
+        }
+        if (!StringUtils.isEmpty(source.getShortname())) {
+            names.add(new VGMdbName(StringUtils.trim(source.getShortname()), VGMdbNameLanguage.alias));
+        }
+        
+        EventLink link = new EventLink();
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }
     
         public static List<Event> transformEventList(List<VGMdbEvent> source) {
         List<Event> events = new ArrayList<>();

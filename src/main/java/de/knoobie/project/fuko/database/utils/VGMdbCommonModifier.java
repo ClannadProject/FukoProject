@@ -6,14 +6,17 @@ import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.ArtistRelease;
+import de.knoobie.project.fuko.database.domain.embeddable.Link;
 import de.knoobie.project.fuko.database.domain.Name;
 import de.knoobie.project.fuko.database.domain.Picture;
 import de.knoobie.project.fuko.database.domain.Website;
 import de.knoobie.project.fuko.database.domain.msc.MSCVGMdbEntity;
 import de.knoobie.project.fuko.database.domain.msc.MSCVGMdbMeta;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbDiscography;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbEvent;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbMeta;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbOrganisation;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbPerson;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbPicture;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbWebsite;
@@ -23,6 +26,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VGMdbCommonModifier {
+
+    public static void updateLink(Link link, List<VGMdbName> names, String _link) {
+
+        if (!StringUtils.isEmpty(_link)) {
+            link.setLink(StringUtils.trim(_link));
+            link.setVgmdbID(StringUtils.getInteger(
+                    StringUtils.trim(_link).replace(
+                            link.getType().getType()+ "/",
+                            StringUtils.EMPTY), null, true));
+        }
+//        link.setNames(getModifiedNames(names));
+    }
 
     public static void addVGMdbID(MSCVGMdbEntity entity, String link, DataType type) {
         if (entity == null) {

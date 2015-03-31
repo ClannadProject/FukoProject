@@ -7,13 +7,49 @@ import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.Name;
+import de.knoobie.project.fuko.database.domain.embeddable.ArtistLink;
+import de.knoobie.project.fuko.database.domain.embeddable.Link;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbumReprint;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbArtist;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VGMdbArtistModifier {
+    
+    public static List<ArtistLink> getLinks(List<VGMdbArtist> source) {
+        List<ArtistLink> links = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((artist) -> {
+            links.add(getLink(artist));
+        });
+
+        return links;
+    }
+    public static ArtistLink getLink(VGMdbArtist source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!StringUtils.isEmpty(source.getName())) {
+            names.add(new VGMdbName(source.getName(), VGMdbNameLanguage.eng));
+        }
+        if (!ListUtils.isEmpty(source.getAliases())) {
+            names.addAll(source.getAliases());
+        }
+
+        ArtistLink link = new ArtistLink();
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }
 
     public static List<Artist> transformArtistList(List<VGMdbArtist> source) {
         List<Artist> artists = new ArrayList<>();
@@ -76,7 +112,7 @@ public class VGMdbArtistModifier {
                     break;
             }
         }
-        
+
         if (!ArrayUtils.isEmpty(source.getVariations())) {
             for (String variation : source.getVariations()) {
                 Name name = new Name();

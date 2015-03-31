@@ -6,9 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Id;
+import javax.persistence.ElementCollection;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,7 +32,7 @@ abstract class MSCVGMdbEntity extends MSCEntity implements Serializable {
   @Column(nullable = true, columnDefinition="TEXT")
   private String description;
 
-  @OneToMany(targetEntity = Name.class)
+  @ElementCollection
   private List<Name> names;
 
   public MSCVGMdbEntity() {

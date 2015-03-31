@@ -61,20 +61,23 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> {
     }
 
     public DatabaseOperationResult updateWithRelations(T object, boolean forceUpdate) {
-        T dbObject = findBy(object.getVgmdbID());
-        if (forceUpdate || dbObject == null || dbObject.getClannadAdded() == null) {
-            object.setId(getID(object.getVgmdbID()));
-            object.setClannadAdded(new Timestamp(DateUtils.getTimestampNow().getTime()));
-            object.setClannadUpdated(object.getClannadAdded());
-            object = updateDatabaseRelations(object);
-            return database.update(object);
-        }
-
-        DatabaseOperationResult result = new DatabaseOperationResult();
-        result.setSuccess(true);
-        result.setResult(object);
-        result.setMessage("No Database Operation executed, data already up to date.");
-        return result;
+        object.setId(getID(object.getVgmdbID()));
+        object = updateDatabaseRelations(object);
+        return database.update(object);
+//        T dbObject = findBy(object.getVgmdbID());
+//        if (forceUpdate || dbObject == null || dbObject.getClannadAdded() == null) {
+//            object.setId(getID(object.getVgmdbID()));
+//            object.setClannadAdded(new Timestamp(DateUtils.getTimestampNow().getTime()));
+//            object.setClannadUpdated(object.getClannadAdded());
+//            object = updateDatabaseRelations(object);
+//            return database.update(object);
+//        }
+//
+//        DatabaseOperationResult result = new DatabaseOperationResult();
+//        result.setSuccess(true);
+//        result.setResult(object);
+//        result.setMessage("No Database Operation executed, data already up to date.");
+//        return result;
     }
 
     public abstract T findBy(int vgmdbID);

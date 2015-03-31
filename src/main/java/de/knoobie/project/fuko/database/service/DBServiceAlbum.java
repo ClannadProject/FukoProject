@@ -17,14 +17,14 @@ public class DBServiceAlbum extends AbstractDBService<Album> implements Serializ
 
     @Override
     protected Album updateDatabaseRelations(Album album) {
-        album.getArrangers().replaceAll(database.getArtistService()::getORadd);
-        album.getComposers().replaceAll(database.getArtistService()::getORadd);
-        album.getLyricists().replaceAll(database.getArtistService()::getORadd);
-        album.getPerformers().replaceAll(database.getArtistService()::getORadd);
-        album.getEvents().replaceAll(database.getEventService()::getORadd);
-        album.getRepresentedProducts().replaceAll(database.getProductService()::getORadd);
-        album.getRelatedAlbums().replaceAll(this::getORadd);
-        album.getReprints().replaceAll(this::getORadd);
+//        album.getArrangers().replaceAll(database.getArtistService()::getORadd);
+//        album.getComposers().replaceAll(database.getArtistService()::getORadd);
+//        album.getLyricists().replaceAll(database.getArtistService()::getORadd);
+//        album.getPerformers().replaceAll(database.getArtistService()::getORadd);
+//        album.getEvents().replaceAll(database.getEventService()::getORadd);
+//        album.getRepresentedProducts().replaceAll(database.getProductService()::getORadd);
+//        album.getRelatedAlbums().replaceAll(this::getORadd);
+//        album.getReprints().replaceAll(this::getORadd);
         return album;
     }
 

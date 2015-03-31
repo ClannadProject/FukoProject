@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -19,7 +20,7 @@ public @Getter @Setter class ProductRelease extends MSCVGMdbEntity implements Se
   @Column(nullable = true)
   private String releaseDate;
   
-  @OneToMany(targetEntity = Name.class)
+    @ElementCollection
   private List<Name> names;
   
   @Basic

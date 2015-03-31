@@ -1,18 +1,17 @@
 package de.knoobie.project.fuko.database.domain;
 
-import de.knoobie.project.fuko.database.domain.msc.MSCEntity;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Embeddable
 public @Getter
 @Setter
-class Name extends MSCEntity implements Serializable {
+class Name implements Serializable {
 
   @Basic
   @Column(nullable = true)

@@ -1,5 +1,11 @@
 package de.knoobie.project.fuko.database.domain;
 
+import de.knoobie.project.fuko.database.domain.embeddable.AlbumLink;
+import de.knoobie.project.fuko.database.domain.embeddable.ArtistLink;
+import de.knoobie.project.fuko.database.domain.embeddable.EventLink;
+import de.knoobie.project.fuko.database.domain.embeddable.Link;
+import de.knoobie.project.fuko.database.domain.embeddable.OrganizationLink;
+import de.knoobie.project.fuko.database.domain.embeddable.ProductLink;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import de.knoobie.project.fuko.database.utils.VGMdbAlbumModifier;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
@@ -7,7 +13,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -69,56 +77,52 @@ class Album extends MSCClannadMeta implements Serializable {
     @ManyToMany(targetEntity = Picture.class)
     private List<Picture> pictures = new ArrayList<>();
 
-    @ManyToMany(targetEntity = Artist.class)
-    @JoinTable(name = "album_performers")
-    private List<Artist> performers = new ArrayList<>();
+    @ElementCollection(targetClass = ArtistLink.class)
+    @CollectionTable(name = "album_performers")
+    private List<ArtistLink> performers = new ArrayList<>();
 
-    @ManyToMany(targetEntity = Artist.class)
-    @JoinTable(name = "album_arrangers")
-    private List<Artist> arrangers = new ArrayList<>();
+    @ElementCollection(targetClass = ArtistLink.class)
+    @CollectionTable(name = "album_arrangers")
+    private List<ArtistLink> arrangers = new ArrayList<>();
 
-    @ManyToMany(targetEntity = Artist.class)
-    @JoinTable(name = "album_composers")
-    private List<Artist> composers = new ArrayList<>();
+    @ElementCollection(targetClass = ArtistLink.class)
+    @CollectionTable(name = "album_composers")
+    private List<ArtistLink> composers = new ArrayList<>();
 
-    @ManyToMany(targetEntity = Artist.class)
-    @JoinTable(name = "album_lyricists")
-    private List<Artist> lyricists = new ArrayList<>();
+    @ElementCollection(targetClass = ArtistLink.class)
+    @CollectionTable(name = "album_lyricists")
+    private List<ArtistLink> lyricists = new ArrayList<>();
 
     @OneToMany(targetEntity = AlbumDisc.class, mappedBy = "album")
     @JoinTable(name = "album_cds")
     private List<AlbumDisc> discs = new ArrayList<>();
+    
+    @ElementCollection(targetClass = ProductLink.class)
+    @CollectionTable(name = "album_represented_products")
+    private List<ProductLink> representedProducts = new ArrayList<>();
 
-    @ManyToMany(targetEntity = Product.class)
-    @JoinTable(name = "album_represented_products")
-    private List<Product> representedProducts = new ArrayList<>();
+    @ElementCollection(targetClass = OrganizationLink.class)
+    @CollectionTable(name = "album_publishers")
+    private List<OrganizationLink> publisher = new ArrayList<>();
+    
+    @ElementCollection(targetClass = OrganizationLink.class)
+    @CollectionTable(name = "album_distributors")
+    private List<OrganizationLink> distributors = new ArrayList<>();
 
-//  @ManyToOne(optional = true, targetEntity = Organization.class)
-//  private Organization publisher;
-    @OneToMany(targetEntity = OrganizationRelease.class, mappedBy = "album")
-    @JoinTable(name = "album_publisher")
-    private List<OrganizationRelease> publisher = new ArrayList<>();
-
-    @ManyToOne(optional = true, targetEntity = Organization.class)
-    private Organization distributor;
-
-    @ManyToMany(targetEntity = Album.class)
-    @JoinTable(name = "album_reprints")
-    private List<Album> reprints = new ArrayList<>();
-
-    @ManyToMany(targetEntity = Album.class)
-    @JoinTable(name = "album_related_albums")
-    private List<Album> relatedAlbums = new ArrayList<>();
-
-    @ManyToMany(targetEntity = Store.class)
-    private List<Store> stores = new ArrayList<>();
+    @ElementCollection(targetClass = AlbumLink.class)
+    @CollectionTable(name = "album_reprints")
+    private List<AlbumLink> reprints = new ArrayList<>();
+    
+    @ElementCollection(targetClass = AlbumLink.class)
+    @CollectionTable(name = "album_related_albums")
+    private List<AlbumLink> relatedAlbums = new ArrayList<>();
 
     @ManyToMany(targetEntity = Website.class)
     private List<Website> websites = new ArrayList<>();
 
-    @JoinTable(name = "event_album_releases")
-    @ManyToMany(targetEntity = Event.class, mappedBy = "releases")
-    private List<Event> events = new ArrayList<>();
+    @ElementCollection(targetClass = EventLink.class)
+    @CollectionTable(name = "album_release_events")
+    private List<EventLink> releaseEvents = new ArrayList<>();
 
     public Album() {
 

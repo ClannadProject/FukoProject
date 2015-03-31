@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -13,45 +14,46 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-public @Getter @Setter class AlbumTrack extends MSCLocalFileStorage implements Serializable {
+public @Getter
+@Setter
+class AlbumTrack extends MSCLocalFileStorage implements Serializable {
 
-  @Basic
-  @Column(nullable = true)
-  private String trackLength;
-  
-  @Basic
-  @Column(nullable = true)
-  private Integer trackPosition;
-  
-  @Basic
-  @Column(nullable = true)
-  private Integer trackRating;
+    @Basic
+    @Column(nullable = true)
+    private String trackLength;
 
-  @ManyToMany(targetEntity = Name.class)
-  private List<Name> names = new ArrayList<>();
-  
-  @ManyToOne(optional = true, targetEntity = AlbumDisc.class)
-  private AlbumDisc cd;
-  
+    @Basic
+    @Column(nullable = true)
+    private Integer trackPosition;
 
-  public AlbumTrack() {
+    @Basic
+    @Column(nullable = true)
+    private Integer trackRating;
 
-  }
+    @ElementCollection
+    private List<Name> names = new ArrayList<>();
 
-  public String getTrackLength() {
-    return trackLength;
-  }
+    @ManyToOne(optional = true, targetEntity = AlbumDisc.class)
+    private AlbumDisc cd;
 
-  public void setTrackLength(String trackLength) {
-    this.trackLength = trackLength;
-  }
+    public AlbumTrack() {
 
-  public List<Name> getNames() {
-    return names;
-  }
+    }
 
-  public void setNames(List<Name> names) {
-    this.names = names;
-  }
+    public String getTrackLength() {
+        return trackLength;
+    }
+
+    public void setTrackLength(String trackLength) {
+        this.trackLength = trackLength;
+    }
+
+    public List<Name> getNames() {
+        return names;
+    }
+
+    public void setNames(List<Name> names) {
+        this.names = names;
+    }
 
 }

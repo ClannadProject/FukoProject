@@ -1,19 +1,51 @@
 package de.knoobie.project.fuko.database.utils;
 
-import de.knoobie.project.clannadutils.common.DateUtils;
 import de.knoobie.project.clannadutils.common.ListUtils;
 import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Product;
 import de.knoobie.project.fuko.database.domain.ProductRelease;
+import de.knoobie.project.fuko.database.domain.embeddable.ProductLink;
+import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbProduct;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbProductMerchandise;
+import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbProductType;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VGMdbProductModifier {
+
+    public static List<ProductLink> getLinks(List<VGMdbProduct> source) {
+        List<ProductLink> links = new ArrayList<>();
+
+        if (ListUtils.isEmpty(source)) {
+            return links;
+        }
+
+        source.stream().forEach((product) -> {
+            links.add(getLink(product));
+        });
+
+        return links;
+    }
+
+    public static ProductLink getLink(VGMdbProduct source) {
+        if (source == null) {
+            return null;
+        }
+
+        List<VGMdbName> names = new ArrayList<>();
+        if (!StringUtils.isEmpty(source.getName())) {
+            names.add(new VGMdbName(StringUtils.trim(source.getName()), VGMdbNameLanguage.eng));
+        }
+        if (!ListUtils.isEmpty(source.getNames())) {
+            names.addAll(source.getNames());
+        }
+        ProductLink link = new ProductLink();
+        VGMdbCommonModifier.updateLink(link, names, source.getLink());
+        return link;
+    }
 
     public static List<Product> transformProductList(List<VGMdbProduct> source) {
         List<Product> organisations = new ArrayList<>();
@@ -56,7 +88,7 @@ public class VGMdbProductModifier {
         product.setReleaseDate(StringUtils.trim(source.getReleaseDate()));
         product.setVgmdbLink(StringUtils.trim(source.getVgmdbLink()));
         product.setPicture(VGMdbCommonModifier.getModifiedPicture(source.getPicture()));
-        
+
         return product;
     }
 
@@ -80,8 +112,8 @@ public class VGMdbProductModifier {
         });
 
         return products;
-    }    
-    
+    }
+
     private static List<Product> getProductsFromLists(List<VGMdbProductMerchandise> source, VGMdbProductType productType) {
         List<Product> products = new ArrayList<>();
         if (ListUtils.isEmpty(source)) {
@@ -94,7 +126,7 @@ public class VGMdbProductModifier {
                 product.setNames(VGMdbCommonModifier.getModifiedNames(sourceProduct.getNames()));
                 product.setReleaseDate(StringUtils.trim(sourceProduct.getDate()));
                 VGMdbCommonModifier.addVGMdbID(product, sourceProduct.getLink(), DataType.PRODUCT);
-                if(productType != null){
+                if (productType != null) {
                     product.setProductType(productType);
                 }
                 products.add(product);

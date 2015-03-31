@@ -167,6 +167,37 @@ public class Main {
         addAlbum(50563);
         addAlbum(50564);
         addAlbum(50563);
+        
+        
+                Album a = FukoDB.getInstance().getAlbumService().findBy(50563);
+        System.out.println("Product: "+ a.getName());
+        a.getNames().stream().forEach((_item) -> {
+            System.out.println("Name: "+_item.getName()+" Language "+_item.getNameLanguage().getHumanizedName());
+        });
+        System.out.println("Arranger:");
+        a.getArrangers().stream().forEach((_item) -> {
+            System.out.println("Arranger: "+_item.getLink()+" Link "+_item.getVgmdbID());
+        });
+        System.out.println("Composer:");
+        a.getComposers().stream().forEach((_item) -> {
+            System.out.println("Composer: "+_item.getLink()+" Link "+_item.getVgmdbID());
+        });
+        System.out.println("getLyricists:");
+        a.getLyricists().stream().forEach((_item) -> {
+            System.out.println("Lyricists: "+_item.getLink()+" Link "+_item.getVgmdbID());
+        });
+        System.out.println("Performers:");
+        a.getPerformers().stream().forEach((_item) -> {
+            System.out.println("Performer: "+_item.getLink()+" Link "+_item.getVgmdbID());
+        });
+        
+        System.out.println("RelatedAlben:");
+        a.getRelatedAlbums().stream().forEach((_item) -> {
+            System.out.println("Album: "+_item.getAlbumCatalog()+" Link "+_item.getVgmdbID()+" Release "+_item.getReleaseDate());
+        });
+        
+        
+//        addAlbum(50563);
 //        addOrganisation(1);
 //        addEvent(1);
 //        addEvent(98);
