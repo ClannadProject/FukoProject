@@ -32,7 +32,7 @@ class AlbumTrack extends MSCLocalFileStorage implements Serializable {
     private Integer trackRating;
 
     @ElementCollection
-    private List<Name> names = new ArrayList<>();
+    private List<Name> trackNames = new ArrayList<>();
 
     @ManyToOne(optional = true, targetEntity = AlbumDisc.class)
     private AlbumDisc cd;
@@ -40,21 +40,4 @@ class AlbumTrack extends MSCLocalFileStorage implements Serializable {
     public AlbumTrack() {
 
     }
-
-    public String getTrackLength() {
-        return trackLength;
-    }
-
-    public void setTrackLength(String trackLength) {
-        this.trackLength = trackLength;
-    }
-
-    public List<Name> getNames() {
-        return names;
-    }
-
-    public void setNames(List<Name> names) {
-        this.names = names;
-    }
-
 }

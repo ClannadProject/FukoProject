@@ -41,7 +41,7 @@ public class Main {
                 System.out.println("vgmdbArtist -> null");
             }
 
-//            Artist a = FukoDB.getInstance().getArtistService().findBy(7699);
+//            Artist a = FukoDB.getInstance().getArtistService().findByVGMdbID(7699);
 //            System.out.println("a--->  " + a.getName());
         } catch (IllegalArgumentException | JsonSyntaxException | IOException ex) {
             ex.printStackTrace();
@@ -156,97 +156,101 @@ public class Main {
     }
 
     public static void main(String[] args) throws IllegalArgumentException, JsonSyntaxException, IOException {
-        initDB();
-        addAlbum(50563, true);
-        addAlbum(50564, true);
-        addAlbum(50563, true);
-        
-        
-                Album a = FukoDB.getInstance().getAlbumService().findBy(50563);
-        System.out.println("Product: "+ a.getName());
-        a.getNames().stream().forEach((_item) -> {
-            System.out.println("Name: "+_item.getName()+" Language "+_item.getNameLanguage().getHumanizedName());
-        });
-        System.out.println("Arranger:");
-        a.getArrangers().stream().forEach((_item) -> {
-            System.out.println("Arranger: "+_item.getLink()+" Link "+_item.getVgmdbID());
-        });
-        System.out.println("Composer:");
-        a.getComposers().stream().forEach((_item) -> {
-            System.out.println("Composer: "+_item.getLink()+" Link "+_item.getVgmdbID());
-        });
-        System.out.println("getLyricists:");
-        a.getLyricists().stream().forEach((_item) -> {
-            System.out.println("Lyricists: "+_item.getLink()+" Link "+_item.getVgmdbID());
-        });
-        System.out.println("Performers:");
-        a.getPerformers().stream().forEach((_item) -> {
-            System.out.println("Performer: "+_item.getLink()+" Link "+_item.getVgmdbID());
-        });
-        
-        System.out.println("RelatedAlben:");
-        a.getRelatedAlbums().stream().forEach((_item) -> {
-            System.out.println("Album: "+_item.getAlbumCatalog()+" Link "+_item.getVgmdbID()+" Release "+_item.getReleaseDate());
-        });
-        
-        
-        addAlbum(50563, true);
+//        initDB();
+//        addAlbum(50563, true);
+//        addAlbum(50564, true);
+//        addAlbum(50563, true);
+//        
+//        
+//                Album a = FukoDB.getInstance().getAlbumService().findByVGMdbID(50563);
+//        System.out.println("Product: "+ a.getName());
+//        a.getNames().stream().forEach((_item) -> {
+//            System.out.println("Name: "+_item.getName()+" Language "+_item.getNameLanguage().getHumanizedName());
+//        });
+//        System.out.println("Arranger:");
+//        a.getArrangers().stream().forEach((_item) -> {
+//            System.out.println("Arranger: "+_item.getLink()+" Link "+_item.getVgmdbID());
+//        });
+//        System.out.println("Composer:");
+//        a.getComposers().stream().forEach((_item) -> {
+//            System.out.println("Composer: "+_item.getLink()+" Link "+_item.getVgmdbID());
+//        });
+//        System.out.println("getLyricists:");
+//        a.getLyricists().stream().forEach((_item) -> {
+//            System.out.println("Lyricists: "+_item.getLink()+" Link "+_item.getVgmdbID());
+//        });
+//        System.out.println("Performers:");
+//        a.getPerformers().stream().forEach((_item) -> {
+//            System.out.println("Performer: "+_item.getLink()+" Link "+_item.getVgmdbID());
+//        });
+//        
+//        System.out.println("RelatedAlben:");
+//        a.getRelatedAlbums().stream().forEach((_item) -> {
+//            System.out.println("Album: "+_item.getAlbumCatalog()+" Link "+_item.getVgmdbID()+" Release "+_item.getReleaseDate());
+//        });
+//        
+//        
+//        addAlbum(48647, true);
         addOrganisation(1);
-        addEvent(1);
-        addEvent(98);
-        addEvent(54);
-        addEvent(175);
-        addEvent(171);
-        addEvent(123);
-        addProduct(1018);
-        addProduct(1019);
-        addProduct(1020);
-        addProduct(1021);
-        addProduct(1022);
-        addProduct(1023);
-        addArtist(6);
-        addAlbum(28329, true);
-        addAlbum(5046, true);
-        addArtist(11952);
-        addAlbum(45755, true);
-        addAlbum(45756, true);
-        addAlbum(46037, true);
-        addArtist(7699);
-        addAlbum(47823, true);
-        addAlbum(551, true);
-        addAlbum(8930, true);
-        Search s = search("kantai");
-        if (s != null) {
-            s.getProducts().stream().forEach((product) -> {
-                addProduct(product.getVgmdbID());
-            });
-            s.getOrganizations().stream().forEach((product) -> {
-                addOrganisation(product.getVgmdbID());
-            });
-            s.getArtists().stream().forEach((product) -> {
-                addArtist(product.getVgmdbID());
-            });
-            s.getAlbums().stream().forEach((product) -> {
-                addAlbum(product.getVgmdbID(), true);
-            });
-        }
-        Search clannadErgebnis = search("clannad");
-        if (clannadErgebnis != null) {
-            clannadErgebnis.getProducts().stream().forEach((product) -> {
-                addProduct(product.getVgmdbID());
-            });
-            clannadErgebnis.getOrganizations().stream().forEach((product) -> {
-                addOrganisation(product.getVgmdbID());
-            });
-            clannadErgebnis.getArtists().stream().forEach((product) -> {
-                addArtist(product.getVgmdbID());
-            });
-            clannadErgebnis.getAlbums().stream().forEach((product) -> {
-                addAlbum(product.getVgmdbID(), true);
-            });
-        }
+        addOrganisation(2);
+        addOrganisation(3);
+        addOrganisation(4);
+        addOrganisation(5);
+//        addEvent(1);
+//        addEvent(98);
+//        addEvent(54);
+//        addEvent(175);
+//        addEvent(171);
+//        addEvent(123);
+//        addProduct(1018);
+//        addProduct(1019);
+//        addProduct(1020);
+//        addProduct(1021);
+//        addProduct(1022);
+//        addProduct(1023);
+//        addArtist(6);
+//        addAlbum(28329, true);
+//        addAlbum(5046, true);
+//        addArtist(11952);
+//        addAlbum(45755, true);
+//        addAlbum(45756, true);
+//        addAlbum(46037, true);
+//        addArtist(7699);
+//        addAlbum(47823, true);
+//        addAlbum(551, true);
+//        addAlbum(8930, true);
+//        Search s = search("kantai");
+//        if (s != null) {
+//            s.getProducts().stream().forEach((product) -> {
+//                addProduct(product.getVgmdbID());
+//            });
+//            s.getOrganizations().stream().forEach((product) -> {
+//                addOrganisation(product.getVgmdbID());
+//            });
+//            s.getArtists().stream().forEach((product) -> {
+//                addArtist(product.getVgmdbID());
+//            });
+//            s.getAlbums().stream().forEach((product) -> {
+//                addAlbum(product.getVgmdbID(), true);
+//            });
+//        }
+//        Search clannadErgebnis = search("clannad");
+//        if (clannadErgebnis != null) {
+//            clannadErgebnis.getProducts().stream().forEach((product) -> {
+//                addProduct(product.getVgmdbID());
+//            });
+//            clannadErgebnis.getOrganizations().stream().forEach((product) -> {
+//                addOrganisation(product.getVgmdbID());
+//            });
+//            clannadErgebnis.getArtists().stream().forEach((product) -> {
+//                addArtist(product.getVgmdbID());
+//            });
+//            clannadErgebnis.getAlbums().stream().forEach((product) -> {
+//                addAlbum(product.getVgmdbID(), true);
+//            });
+//        }
 
-//        Product a = FukoDB.getInstance().getProductService().findBy(1018);
+//        Product a = FukoDB.getInstance().getProductService().findByVGMdbID(1018);
 //        System.out.println("Product: "+ a.getName());
 //        a.getNames().stream().forEach((_item) -> {
 //            System.out.println("Name: "+_item.getName()+" Language "+_item.getNameLanguage().getHumanizedName());
@@ -264,7 +268,7 @@ public class Main {
 //            System.out.println("Album: "+_item.getName()+" Link "+_item.getLink());
 //        });
 //        addProduct(1018);
-//        Artist a = FukoDB.getInstance().getArtistService().findBy(7699);
+//        Artist a = FukoDB.getInstance().getArtistService().findByVGMdbID(7699);
 //        System.out.println("---> "+ a.getName());
 //        a.getDiscography().stream().forEach((release) -> {
 //            System.out.println("a:discography: "+release.getAlbum().getLink()+" Roles: "+release.getRoles());

@@ -1,5 +1,6 @@
 package de.knoobie.project.fuko.database.domain;
 
+import de.knoobie.project.fuko.database.domain.embeddable.Picture;
 import de.knoobie.project.fuko.database.domain.embeddable.AlbumLink;
 import de.knoobie.project.fuko.database.domain.embeddable.ArtistLink;
 import de.knoobie.project.fuko.database.domain.embeddable.EventLink;
@@ -55,7 +56,7 @@ class Album extends MSCClannadMeta implements Serializable {
     private String releaseCurrency;
     @Basic
     @Column(nullable = true)
-    private String albumType;
+    private String albumCategorie;
     @Basic
     @Column(nullable = true)
     private Integer albumRating;

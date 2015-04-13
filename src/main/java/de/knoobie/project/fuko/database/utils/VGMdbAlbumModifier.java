@@ -6,7 +6,6 @@ import de.knoobie.project.fuko.database.bo.enums.DataType;
 import de.knoobie.project.fuko.database.domain.Album;
 import de.knoobie.project.fuko.database.domain.AlbumDisc;
 import de.knoobie.project.fuko.database.domain.AlbumTrack;
-import de.knoobie.project.fuko.database.domain.embeddable.Link;
 import de.knoobie.project.fuko.database.domain.embeddable.AlbumLink;
 import de.knoobie.project.fuko.database.domain.embeddable.OrganizationLink;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbAlbum;
@@ -206,7 +205,7 @@ public class VGMdbAlbumModifier {
 
         Album album = new Album();
         album.setReleaseDate(StringUtils.trim(source.getReleaseDate()));
-        album.setAlbumType(StringUtils.trim(source.getAlbumType()));
+//        album.set(StringUtils.trim(source.getAlbumType()));
         album.setNames(VGMdbCommonModifier.getModifiedNames(source.getNames()));
         album.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
         OrganizationLink publisher = VGMdbPersonModifier.getOrganizationLink(source.getPublisher());
@@ -244,7 +243,7 @@ public class VGMdbAlbumModifier {
 
 //        album.setCover(VGMdbCommonModifier.getModifiedPicture(source.getPicture()));
         album.setReleaseDate(StringUtils.trim(source.getReleaseDate()));
-        album.setAlbumType(StringUtils.trim(source.getType()));
+        album.setAlbumCategorie(StringUtils.trim(source.getCategory()));
         album.setName(StringUtils.trim(source.getName()));
         album.setNames(VGMdbCommonModifier.getModifiedNames(source.getNames()));
         album.setAlbumCatalog(StringUtils.trim(source.getCatalog()));
@@ -340,7 +339,7 @@ public class VGMdbAlbumModifier {
 
         source.stream().forEach((sourceTrack) -> {
             AlbumTrack track = new AlbumTrack();
-            track.setNames(VGMdbCommonModifier.getModifiedNames(sourceTrack.getNames()));
+            track.setTrackNames(VGMdbCommonModifier.getModifiedNames(sourceTrack.getNames()));
             track.setTrackLength(StringUtils.trim(sourceTrack.getTrackLength()));
             track.setTrackPosition(source.indexOf(sourceTrack) + 1);
             track.setCd(albumDisc);

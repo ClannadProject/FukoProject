@@ -11,12 +11,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public abstract class AbstractDBService<T extends MSCClannadMeta> implements Serializable {
+public abstract class AbstractVGMdbService<T extends MSCClannadMeta> implements Serializable {
 
     public final FukoDB database;
     public static final String VGMDB_COLUMN_ID = "vgmdbID";
 
-    AbstractDBService(final FukoDB database) {
+    AbstractVGMdbService(final FukoDB database) {
         if (database == null) {
             throw new IllegalArgumentException("Übergabeparameter dürfen nicht null sein (database = "
                     + database + ")!");
@@ -26,16 +26,16 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> implements Ser
     }
 
     public T getORadd(T source) {
-        T realObject = findBy(source.getVgmdbID());
+        T realObject = findByVGMdbID(source.getVgmdbID());
         if (realObject == null) {
             database.update(source);
-            realObject = findBy(source.getVgmdbID());
+            realObject = findByVGMdbID(source.getVgmdbID());
         }
         return realObject;
     }
 
     public Long getID(int vgmdbID) {
-        T databaseObject = findBy(vgmdbID);
+        T databaseObject = findByVGMdbID(vgmdbID);
         if (databaseObject != null && databaseObject.getId() != null) {
             return databaseObject.getId();
         }
@@ -57,7 +57,7 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> implements Ser
     }
 
     public DatabaseOperationResult updateWithRelations(T object, boolean forceUpdate) {
-        T dbObject = findBy(object.getVgmdbID());
+        T dbObject = findByVGMdbID(object.getVgmdbID());
         if (dbObject != null) {
             object.setId(dbObject.getId());
             object.setClannadAdded(dbObject.getClannadAdded());
@@ -67,12 +67,14 @@ public abstract class AbstractDBService<T extends MSCClannadMeta> implements Ser
                 object.setClannadAdded(new Timestamp(DateUtils.getTimestampNow().getTime()));
             }
         }
-
-        object = updateDatabaseRelations(object);
+        // update only relationships, if there is no DB Object or DB Object Data are older than the VGMdb Data
+        if (dbObject == null || !dbObject.getVgmdbUpdated().equals(object.getVgmdbUpdated())) {
+            object = updateDatabaseRelations(object);
+        }
         return database.update(object);
     }
 
-    public abstract T findBy(int vgmdbID);
+    public abstract T findByVGMdbID(int vgmdbID);
 
     protected abstract T updateDatabaseRelations(T object);
 }

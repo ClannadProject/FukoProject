@@ -1,5 +1,6 @@
 package de.knoobie.project.fuko.database.domain;
 
+import de.knoobie.project.fuko.database.domain.embeddable.Picture;
 import de.knoobie.project.fuko.database.domain.embeddable.AlbumLink;
 import de.knoobie.project.fuko.database.domain.msc.MSCClannadMeta;
 import de.knoobie.project.fuko.database.utils.VGMdbOrganizationModifier;
@@ -33,14 +34,9 @@ class Organization extends MSCClannadMeta implements Serializable {
     @Embedded
     private Picture picture;
 
-    // getNames --> getAliases!
-    
     @ElementCollection(targetClass = AlbumLink.class)        
     @CollectionTable(name = "organization_album_releases")
     private List<AlbumLink> releases = new ArrayList<>();
-    
-//    @OneToMany(targetEntity = OrganizationRelease.class, mappedBy = "publisher")
-//    private List<OrganizationRelease> releases = new ArrayList<>();
 
     public Organization() {
 

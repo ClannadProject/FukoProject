@@ -3,18 +3,14 @@ package de.knoobie.project.fuko.database.utils;
 import de.knoobie.project.clannadutils.common.ListUtils;
 import de.knoobie.project.clannadutils.common.StringUtils;
 import de.knoobie.project.fuko.database.bo.enums.DataType;
-import de.knoobie.project.fuko.database.domain.Album;
-import de.knoobie.project.fuko.database.domain.Artist;
 import de.knoobie.project.fuko.database.domain.embeddable.Link;
 import de.knoobie.project.fuko.database.domain.Name;
-import de.knoobie.project.fuko.database.domain.Picture;
+import de.knoobie.project.fuko.database.domain.embeddable.Picture;
 import de.knoobie.project.fuko.database.domain.embeddable.WebsiteLink;
 import de.knoobie.project.fuko.database.domain.msc.MSCVGMdbEntity;
 import de.knoobie.project.fuko.database.domain.msc.MSCVGMdbMeta;
-import de.knoobie.project.nagisa.gson.model.bo.VGMdbDiscography;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbMeta;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbName;
-import de.knoobie.project.nagisa.gson.model.bo.VGMdbPerson;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbPicture;
 import de.knoobie.project.nagisa.gson.model.bo.VGMdbWebsite;
 import de.knoobie.project.nagisa.gson.model.bo.enums.VGMdbNameLanguage;
@@ -33,17 +29,10 @@ public class VGMdbCommonModifier {
                             link.getType().getType() + "/",
                             StringUtils.EMPTY), null, true));
         }
-//        link.setNames(getModifiedNames(names));
         List<Name> rightNames = getModifiedNames(names);
         if (rightNames.size() >= 1) {
             link.setPrimaryName(rightNames.get(0));
         }
-//        if(rightNames.size() >= 2){
-//           link.setSecondaryName1(rightNames.get(1));
-//        }
-//        if(rightNames.size() >= 3){
-//           link.setSecondaryName2(rightNames.get(2));
-//        }
     }
 
     public static void addVGMdbID(MSCVGMdbEntity entity, String link, DataType type) {
@@ -116,7 +105,7 @@ public class VGMdbCommonModifier {
         picture.setUrlFull(StringUtils.trim(source.getFull()));
         picture.setUrlSmall(StringUtils.trim(source.getSmall()));
         picture.setUrlThumbnail(StringUtils.trim(source.getThumbnail()));
-        picture.setCover(true);
+        picture.setCover(isCover);
         return picture;
     }
 

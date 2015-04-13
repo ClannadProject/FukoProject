@@ -1,6 +1,5 @@
-package de.knoobie.project.fuko.database.domain;
+package de.knoobie.project.fuko.database.domain.embeddable;
 
-import de.knoobie.project.fuko.database.domain.msc.MSCLocalFileStorage;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;

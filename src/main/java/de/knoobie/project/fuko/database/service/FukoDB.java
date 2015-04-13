@@ -1,15 +1,13 @@
 package de.knoobie.project.fuko.database.service;
 
 import de.knoobie.project.fuko.database.bo.DatabaseOperationResult;
-import de.knoobie.project.fuko.database.domain.Search;
 import de.knoobie.project.fuko.database.domain.msc.MSCEntity;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 public class FukoDB {
 
@@ -37,7 +35,11 @@ public class FukoDB {
     }
 
     private FukoDB(PersistenceUnitName persistenceUnit) {
-        this.entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit.getName());
+        this.entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit.getName()/**
+         * ,
+         * FukoDBProperties.databaseProperties*
+         */
+        );
     }
 
     public static FukoDB getInstance(PersistenceUnitName persistenceUnit) {
@@ -136,6 +138,20 @@ public class FukoDB {
             return null;
         } finally {
             if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
+    public List findAll(Class<? extends MSCEntity> entityClass) {
+        EntityManager entityManager = getEntityManager();
+        CriteriaQuery criteriaQuery = entityManager.getCriteriaBuilder().createQuery();
+        criteriaQuery.select(criteriaQuery.from(entityClass));
+
+        try {
+            return entityManager.createQuery(criteriaQuery).getResultList();
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
                 entityManager.close();
             }
         }
